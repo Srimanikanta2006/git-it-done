@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
-import type { ArtId, OS, Step } from '../engine/types'
+import type { ArtId, Card, OS, Picture, Step } from '../engine/types'
 import { OS_LIST, useOS } from '../os'
 import { Graph } from './Graph'
 import { AMBIENT_REPO } from './Panels'
@@ -95,7 +95,7 @@ function RingArt() {
       </g>
       <circle cx="400" cy="320" r="120" fill="var(--panel-2)" stroke="var(--lane-main)" strokeWidth="5" strokeDasharray="14 12" />
       <text x="400" y="342" textAnchor="middle" className="art-mono" fontSize="76" fill="var(--lane-main)">{'</>'}</text>
-      <text x="400" y="395" textAnchor="middle" className="art-text" fontSize="30" fill="var(--term-text)">open source</text>
+      <text x="400" y="395" textAnchor="middle" className="art-text" fontSize="38" fill="var(--term-text)">open source</text>
       {Object.entries(RING_LABELS).map(([k, [label, color]]) => {
         const p = polar(400, 320, 250, Number(k), 24)
         return (
@@ -115,10 +115,10 @@ function KernelArt() {
       <rect x="40" y="30" width="720" height="440" rx="44" fill="var(--panel-2)" stroke="var(--panel-line)" strokeWidth="4" />
       <text x="80" y="92" className="art-text" fontSize="32" fill="var(--term-dim)">Your apps</text>
       <rect x="110" y="120" width="580" height="320" rx="36" fill="none" stroke="var(--lane-remote)" strokeWidth="5" strokeDasharray="14 12" />
-      <text x="140" y="168" className="art-text" fontSize="30" fill="var(--lane-remote)">Operating system</text>
+      <text x="140" y="168" className="art-text" fontSize="34" fill="var(--lane-remote)">Operating system</text>
       <rect x="220" y="205" width="360" height="190" rx="30" fill="var(--lane-main)" />
       <text x="400" y="285" textAnchor="middle" className="art-text" fontSize="64" fill="var(--panel)">Kernel</text>
-      <text x="400" y="340" textAnchor="middle" className="art-text" fontSize="30" fill="var(--panel)">the core</text>
+      <text x="400" y="340" textAnchor="middle" className="art-text" fontSize="34" fill="var(--panel)">the core</text>
       <rect x="40" y="490" width="720" height="62" rx="20" fill="var(--panel-2)" stroke="var(--lane-feature)" strokeWidth="4" />
       <text x="400" y="532" textAnchor="middle" className="art-text" fontSize="32" fill="var(--lane-feature)">Hardware</text>
       {[['Web servers', 40], ['Phones', 292], ['Supercomputers', 456]].map(([t, x]) => (
@@ -149,8 +149,8 @@ function LinusArt() {
       {MINI.map(([x, year, label, lit]) => (
         <g key={year} opacity={lit ? 1 : 0.35}>
           <circle cx={x} cy="100" r="22" fill={lit ? 'var(--lane-main)' : 'var(--panel-2)'} stroke="var(--lane-main)" strokeWidth="4" />
-          <text x={x} y="48" textAnchor="middle" className="art-text" fontSize="40" fill={lit ? 'var(--lane-main)' : 'var(--term-dim)'}>{year}</text>
-          {label && <text x={x} y="160" textAnchor="middle" className="art-text" fontSize="30" fill="var(--term-text)">{label}</text>}
+          <text x={x} y="48" textAnchor="middle" className="art-text" fontSize="52" fill={lit ? 'var(--lane-main)' : 'var(--term-dim)'}>{year}</text>
+          {label && <text x={x} y="170" textAnchor="middle" className="art-text" fontSize="44" fill="var(--term-text)">{label}</text>}
         </g>
       ))}
       {CROWD.map((d, i) => (
@@ -160,9 +160,94 @@ function LinusArt() {
         </g>
       ))}
       <circle cx="400" cy="405" r="68" fill="var(--lane-main)" stroke="var(--panel)" strokeWidth="8" />
-      <text x="400" y="416" textAnchor="middle" className="art-text" fontSize="32" fill="var(--panel)">Linus</text>
-      <text x="400" y="622" textAnchor="middle" className="art-text" fontSize="30" fill="var(--term-text)">thousands of contributors</text>
+      <text x="400" y="420" textAnchor="middle" className="art-text" fontSize="42" fill="var(--panel)">Linus</text>
+      <text x="400" y="622" textAnchor="middle" className="art-text" fontSize="42" fill="var(--term-text)">thousands of contributors</text>
     </svg>
+  )
+}
+
+const asset = (src: string) => import.meta.env.BASE_URL + src
+
+/* ---------- Linus card: a real photo next to the crowd drawing ---------- */
+export function LinusPanel({ picture }: { picture?: Picture }) {
+  const [ok, setOk] = useState(true)
+  return (
+    <div className="panel linus-panel">
+      {picture && (
+        <figure className="linus-photo">
+          {ok ? (
+            <img src={asset(picture.src)} alt={picture.alt} onError={() => setOk(false)} />
+          ) : (
+            <div className="photo-missing">Photo missing: add public/{picture.src}</div>
+          )}
+          {picture.credit && <figcaption>{picture.credit}</figcaption>}
+        </figure>
+      )}
+      <div className="linus-art"><LinusArt /></div>
+    </div>
+  )
+}
+
+/* ---------- Mukti card: motto and links ---------- */
+export function MuktiPanel({ tagline, links }: { tagline?: Card['tagline']; links?: Card['links'] }) {
+  return (
+    <div className="panel mukti-panel">
+      {tagline && (
+        <div>
+          <div className="mk-tag">{tagline.text}</div>
+          <div className="mk-trans">{tagline.translation}</div>
+        </div>
+      )}
+      <ul className="mk-links">
+        {links?.map((l) => (
+          <li key={l.label}>
+            <b>{l.label}</b>
+            {l.url ? <a href={l.url} target="_blank" rel="noreferrer">{l.url}</a> : <span className="todo">TODO: add the {l.label} link</span>}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+/* ---------- Personal software: one person, a few apps, open source underneath ---------- */
+function AudienceArt() {
+  return (
+    <svg className="art" viewBox="0 0 800 640" role="img" aria-label="One person with a few small apps built just for them, all sitting on open source parts">
+      <circle cx="110" cy="230" r="46" fill="var(--lane-main)" />
+      <rect x="48" y="292" width="124" height="120" rx="52" fill="var(--lane-main)" />
+      <text x="110" y="470" textAnchor="middle" className="art-text" fontSize="44" fill="var(--term-text)">You</text>
+      {['Timetable', 'Expenses', 'Anything'].map((t, i) => {
+        const y = 70 + i * 140
+        return (
+          <g key={t}>
+            <line x1="180" y1="330" x2="330" y2={y + 50} stroke="var(--panel-line)" strokeWidth="4" strokeLinecap="round" />
+            <rect x="330" y={y} width="420" height="100" rx="26" fill="var(--panel-2)" stroke={DOT_COLORS[i]} strokeWidth="5" />
+            <text x="540" y={y + 66} textAnchor="middle" className="art-text" fontSize="44" fill="var(--term-text)">{t}</text>
+          </g>
+        )
+      })}
+      <rect x="40" y="520" width="720" height="84" rx="42" fill="none" stroke="var(--lane-feature)" strokeWidth="5" strokeDasharray="14 12" />
+      <text x="400" y="574" textAnchor="middle" className="art-text" fontSize="42" fill="var(--lane-feature)">open source parts</text>
+    </svg>
+  )
+}
+
+/* ---------- Full-bleed screenshot card, with a visible placeholder if the file is missing ---------- */
+export function ShotFigure({ picture }: { picture: Picture }) {
+  const [ok, setOk] = useState(true)
+  return (
+    <figure className="fs-fig">
+      {ok ? (
+        <img className="fs-img" src={asset(picture.src)} alt={picture.alt} onError={() => setOk(false)} />
+      ) : (
+        <div className="fs-missing" role="img" aria-label={picture.alt}>
+          <strong>Screenshot missing</strong>
+          <span>Add the file public/{picture.src}</span>
+        </div>
+      )}
+      {picture.caption && <figcaption>{picture.caption}</figcaption>}
+    </figure>
   )
 }
 
@@ -232,10 +317,9 @@ function BornArt() {
             style={{ transformOrigin: `${x}px 300px`, transformBox: 'view-box' }}
           />
           <text x={x} y="200" textAnchor="middle" className="art-text" fontSize="56" fill={color}>{year}</text>
-          <text x={x} y="400" textAnchor="middle" className="art-text" fontSize="30" fill="var(--term-text)">{label}</text>
+          <text x={x} y="400" textAnchor="middle" className="art-text" fontSize="34" fill="var(--term-text)">{label}</text>
         </g>
       ))}
-      <text x="400" y="460" textAnchor="middle" className="art-mono" fontSize="30" fill="var(--term-dim)">about two weeks</text>
     </svg>
   )
 }
@@ -248,6 +332,8 @@ export function StoryArt({ art }: { art: ArtId }) {
     case 'chaos': return <ChaosArt />
     case 'snapshots': return <SnapshotsArt />
     case 'born': return <BornArt />
+    case 'audience': return <AudienceArt />
+    case 'mukti': return null
   }
 }
 

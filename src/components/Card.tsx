@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { cards } from '../cards'
 import { fileStage, replay } from '../engine/reducer'
-import { Compare, Hero, MessyShot, RemoteArt, SetupPanel, StoryArt, StubPanel } from './Art'
+import { Compare, Hero, LinusPanel, MessyShot, MuktiPanel, RemoteArt, SetupPanel, ShotFigure, StoryArt, StubPanel } from './Art'
 import { CommandChip } from './Copy'
 import { Graph } from './Graph'
 import { FileStrip } from './Panels'
@@ -31,7 +31,12 @@ export function Card({ cardIdx, done, applied, playing, instant, onStepDone, fra
       panel = <div className="panel center"><Hero word={card.hero ?? ''} /></div>
       break
     case 'story':
-      panel = <div className="panel center">{card.art && <StoryArt art={card.art} />}</div>
+      if (card.art === 'linus') panel = <LinusPanel picture={card.picture} />
+      else if (card.art === 'mukti') panel = <MuktiPanel tagline={card.tagline} links={card.links} />
+      else panel = <div className="panel center">{card.art && <StoryArt art={card.art} />}</div>
+      break
+    case 'fullshot':
+      panel = null
       break
     case 'compare':
       panel = <div className="panel center"><Compare /></div>
@@ -77,10 +82,26 @@ export function Card({ cardIdx, done, applied, playing, instant, onStepDone, fra
       )
   }
 
+  if (card.view === 'fullshot' && card.picture) {
+    return (
+      <div className={'card fullshot' + (framed ? ' framed' : '')}>
+        <div className="fs-head">
+          <div className="kicker">{card.kicker}</div>
+          <h1>{card.title}</h1>
+          <p className="sentence">{card.sentence}</p>
+        </div>
+        <ShotFigure picture={card.picture} />
+      </div>
+    )
+  }
+
+  const weight = card.sentence.length + (card.bullets ?? []).join('').length + (card.note ?? '').length
+  const dense = card.view === 'story' && weight > 260
+
   return (
-    <div className={'card' + (framed ? ' framed' : '') + (card.view === 'messy' ? ' wide' : '')}>
+    <div className={'card' + (framed ? ' framed' : '') + (card.view === 'messy' ? ' wide' : '') + (dense ? ' dense' : '')}>
       <div className="card-left">
-        <div className="kicker">{card.kicker}</div>
+        <div className={'kicker' + (card.bigKicker ? ' big' : '')}>{card.kicker}</div>
         <h1>{card.title}</h1>
         <p className="sentence">{card.sentence}</p>
         {card.bullets && (

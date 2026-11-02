@@ -51,10 +51,13 @@ export interface StackScene {
 
 export type Section = 'hook' | 'stepback' | 'story' | 'git' | 'part2'
 export type Lane = 'main' | 'branch' | 'detour'
-export type ArtId = 'ring' | 'kernel' | 'linus' | 'chaos' | 'snapshots' | 'born'
+export type ArtId = 'ring' | 'kernel' | 'linus' | 'chaos' | 'snapshots' | 'born' | 'mukti' | 'audience'
 
 export type View =
-  | 'messy' | 'hero' | 'story' | 'compare' | 'areas' | 'remote' | 'setup' | 'terminal' | 'stub' | 'challenge'
+  | 'messy' | 'hero' | 'story' | 'compare' | 'areas' | 'remote' | 'setup' | 'terminal' | 'stub' | 'challenge' | 'fullshot'
+
+/** A real picture with alt text. credit is shown under it when set. */
+export interface Picture { src: string; alt: string; credit?: string; caption?: string }
 
 export interface Card {
   id: string
@@ -69,6 +72,14 @@ export interface Card {
   /** Closing line shown as a highlighted chip (recap card). */
   final?: string
   tryIt?: string
+  /** Show the kicker as large plain text (workshop opener line). */
+  bigKicker?: boolean
+  /** Mukti card: motto and its translation. */
+  tagline?: { text: string; translation: string }
+  /** Mukti card: contact links. A missing url is shown as a TODO. */
+  links?: { label: string; url?: string }[]
+  /** Linus card: photo shown beside the art. fullshot view: the screenshot. */
+  picture?: Picture
   view: View
   art?: ArtId
   hero?: string

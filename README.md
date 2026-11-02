@@ -30,7 +30,7 @@ Nothing ever advances by itself. Click a rail node to jump. Every card has its o
 
 A. Hook: `messy`, `git-answer`
 B. Zoom out: `open-source` (the stack pulls back and cards come in front, one after another)
-C. Peel back: `linux`, `linus`, `vc-problem`, `vc-idea`, `git-born`, `recap` (each press moves the front card away)
+C. Peel back: `mukti`, `personal-software`, `linux`, `linus`, `vc-problem`, `vc-idea`, `git-born`, `recap` (each press moves the front card away)
 D. Dive into Git: `git-vs-github`, `three-areas`, `init`, `status`, `add`, `commit`, `log`, `github` (going remote: why we need GitHub), `push`
 E. Workshop opener: `setup` (open a terminal, install Git, set your name and email; the operating system picker opens by itself the first time)
 
@@ -64,7 +64,7 @@ Add an object to the array in `src/cards.ts`. The id becomes the URL.
 }
 ```
 
-Story cards use `view: 'story'` with `art` (`ring`, `kernel`, `linus`, `chaos`, `snapshots`, `born`) and a drawer with `happening` plus `talking` points.
+Story cards use `view: 'story'` with `art` (`ring`, `kernel`, `linus`, `chaos`, `snapshots`, `born`, `mukti`, `audience`). Images live in `public/img/`; the `linux-repo` card (`view: 'fullshot'`) shows `public/img/linux-repo.png` and a visible placeholder until you add it and a drawer with `happening` plus `talking` points.
 
 ### Stack scenes
 
