@@ -22,6 +22,8 @@ const CARDS = [
   ['messy', "You've all been here.", 0],
   ['git-answer', "There's a tool for this.", 0],
   ['open-source', 'Open source', 0],
+  ['mukti', 'Mukti', 0],
+  ['personal-software', 'Software for an audience of one', 0],
   ['linux', 'Linux', 0],
   ['linus', 'Linus Torvalds', 0],
   ['vc-problem', 'The messy folder, times a thousand', 0],
@@ -34,12 +36,13 @@ const CARDS = [
   ['status', 'Ask what changed', 2],
   ['add', 'Choose what to save', 2],
   ['commit', 'Save a snapshot', 3],
-  ['log', 'Read the history', 2],
+  ['log', 'Read the history', 1],
+  ['linux-repo', 'This is what real history looks like.', 0],
   ['github', 'Now we need GitHub.', 0],
   ['push', 'Send it to GitHub', 2],
   ['setup', 'Let\u2019s get Git on your laptop.', 3],
 ]
-const STACK = ['open-source', 'linux', 'linus', 'vc-problem', 'vc-idea', 'git-born', 'recap']
+const STACK = ['open-source', 'mukti', 'personal-software', 'linux', 'linus', 'vc-problem', 'vc-idea', 'git-born', 'recap']
 const wait = (a, b) => (STACK.includes(a) || STACK.includes(b) ? 5500 : 1900)
 const idx = (id) => CARDS.findIndex((c) => c[0] === id)
 
@@ -183,7 +186,7 @@ async function directLoads(browser) {
   await page.keyboard.press('ArrowLeft'); await settle(page)
   expect('push -> back to github', await readState(page), 'github', 0)
   await page.keyboard.press('ArrowLeft'); await settle(page)
-  expect('github -> back to log', await readState(page), 'log', 2)
+  expect('github -> back to linux-repo', await readState(page), 'linux-repo', 0)
   await page.close()
 }
 
@@ -194,12 +197,12 @@ async function layout(browser) {
   for (const [w, h] of SIZES) {
     const page = await browser.newPage()
     await page.setViewport({ width: w, height: h })
-    for (const id of ['github', 'push', 'setup']) {
+    for (const id of ['open-source', 'mukti', 'personal-software', 'linux', 'linus', 'vc-idea', 'git-born', 'git-vs-github', 'linux-repo', 'github', 'push', 'setup']) {
       await page.goto(URL + '#/' + id, { waitUntil: 'networkidle0' })
       await page.reload({ waitUntil: 'networkidle0' })
       await settle(page, 900)
       await closePicker(page)
-      const steps = id === 'github' ? 0 : id === 'push' ? 2 : 3
+      const steps = id === 'setup' ? 3 : id === 'push' ? 2 : 0
       for (let i = 0; i < steps; i++) { await page.keyboard.press('Space'); await settle(page, id === 'push' ? 2600 : 600) }
       await sleep(900)
       await page.screenshot({ path: `scripts/shots/${id}-${w}x${h}.png` })
@@ -213,6 +216,8 @@ async function layout(browser) {
           if (!n.textContent.trim()) continue
           const el = n.parentElement
           if (hidden(el) || el.closest('.drawer') || el.closest('[aria-hidden="true"]')) continue
+          const layer = el.closest('.slayer')
+          if (layer && layer !== layer.parentElement.lastElementChild) continue // cards behind the front one in a stack
           const r = document.createRange(); r.selectNodeContents(n)
           const b = r.getBoundingClientRect()
           if (!b.width) continue
@@ -229,11 +234,12 @@ async function layout(browser) {
             if (b.left < p.left - 1 || b.right > p.right + 1 || b.top < p.top - 1 || b.bottom > p.bottom + 1) out.push(`clipped by its box: "${t}"`)
           }
         }
-        document.querySelectorAll('.card-left, .panel').forEach((e) => {
+        const front = document.querySelector('.slayer:last-child') || document
+        front.querySelectorAll('.card-left, .panel, .fs-head, .fs-fig').forEach((e) => {
           if (e.scrollHeight > e.clientHeight + 1 || e.scrollWidth > e.clientWidth + 1) out.push(`overflow in .${e.className.split(' ')[0]}`)
         })
         const rail = document.querySelector('.rail').getBoundingClientRect()
-        const card = document.querySelector('.card-left')?.getBoundingClientRect()
+        const card = front.querySelector('.card-left, .fs-fig')?.getBoundingClientRect()
         if (card && card.bottom > rail.top + 1) out.push('card text area overlaps the rail')
         return out
       })
