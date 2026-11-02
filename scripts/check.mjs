@@ -36,7 +36,7 @@ const CARDS = [
   ['status', 'Ask what changed', 2],
   ['add', 'Choose what to save', 2],
   ['commit', 'Save a snapshot', 3],
-  ['log', 'Read the history', 2],
+  ['log', 'Read the history', 1],
   ['linux-repo', 'This is what real history looks like.', 0],
   ['github', 'Now we need GitHub.', 0],
   ['push', 'Send it to GitHub', 2],

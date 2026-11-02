@@ -40,9 +40,9 @@ export function Drawer({ card, open, onClose }: { card: Card; open: boolean; onC
         <section>
           <h3>Copy-paste commands</h3>
           {d.commands.some((c) => missing(resolve(c), details)) && <p className="drawer-banner">Add your details once (press U) and every command fills in for you.</p>}
-          {d.commands.map((c) => {
+          {d.commands.map((c, i) => {
             const text = resolve(c)
-            return <div className="cmd-row" key={text}><code><Cmd text={text} /></code><CopyButton text={text} /></div>
+            return <div className="cmd-row" key={i + text}><code><Cmd text={text} /></code><CopyButton text={text} /></div>
           })}
         </section>
       )}

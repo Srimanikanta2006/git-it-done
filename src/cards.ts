@@ -368,12 +368,13 @@ export const cards: Card[] = [
       { cmd: '', output: [], op: none, file: 'repo', label: 'git commit saves it into history' },
     ],
     drawer: {
-      commands: ['git status', 'git add notes.txt', 'git commit -m "add notes"'],
+      commands: ['echo "hello git" > notes.txt', 'git status', 'git add notes.txt', 'git commit -m "add notes"'],
       mistakes: [
         { title: 'Forgetting git add', fix: 'A commit only contains what is staged. Run git status to see what is staged and what is not.' },
         { title: 'Thinking saving a file saves it in Git', fix: 'Saving in your editor only changes the working folder. Git needs add and commit.' },
       ],
       happening: 'You edit files in the working folder. git add copies your chosen changes onto the staging shelf. git commit packs everything on that shelf into one permanent snapshot in the repository.',
+      talking: ['echo "text" > file creates a file with that text (>> adds a line to the end).'],
     },
   },
   {
@@ -399,6 +400,11 @@ export const cards: Card[] = [
         { title: 'Running it inside another repository', fix: 'Do not nest repositories. If git status already works, the folder is already a repository.' },
       ],
       happening: 'git init creates a hidden folder called .git. That folder is the repository: it holds the whole history. The files you can see are just the working folder.',
+      talking: [
+        'mkdir name && cd name makes a folder and moves into it.',
+        'ls -a lists files including hidden ones like .git.',
+        'On Windows, run these commands in Git Bash.',
+      ],
     },
   },
   {
@@ -423,12 +429,13 @@ export const cards: Card[] = [
       },
     ],
     drawer: {
-      commands: ['git status', 'git status -s'],
+      commands: ['echo "hello git" > notes.txt', 'git status', 'git status -s'],
       mistakes: [
         { title: '"not a git repository"', fix: 'You are in the wrong folder, or you have not run git init yet.' },
         { title: 'Ignoring what status says', fix: 'Read it. Git tells you the next command to try.' },
       ],
       happening: 'git status compares three things: your working folder, the staging shelf and the last snapshot. It lists every difference. A file that Git has never seen is called untracked.',
+      talking: ['echo "text" > file creates a file with that text (>> adds a line to the end).'],
     },
   },
   {
@@ -454,7 +461,7 @@ export const cards: Card[] = [
       },
     ],
     drawer: {
-      commands: ['git add notes.txt', 'git add .', 'git status'],
+      commands: ['git add notes.txt', 'git status', 'git add .', 'git status'],
       mistakes: [
         { title: 'Adding secrets or huge files with git add .', fix: 'Check git status before you commit. Unstage a file with git restore --staged <file>.' },
         { title: 'Editing after git add', fix: 'Git staged the file as it was. Run git add again to stage the newer edits.' },
@@ -482,13 +489,14 @@ export const cards: Card[] = [
       { cmd: 'git commit -am "add second line"', output: ['[main 5d6e7f8] add second line'], op: { type: 'commit', branch: 'main', id: '5d6e7f8', msg: 'add second line' }, file: 'repo' },
     ],
     drawer: {
-      commands: ['git commit -m "add notes"', 'git commit -am "add second line"', 'git status'],
+      commands: ['git commit -m "add notes"', 'echo "second line" >> notes.txt', 'git commit -am "add second line"', 'git status'],
       mistakes: [
         { title: '"nothing to commit"', fix: 'The file was not saved in your editor, or you forgot git add. Run git status to see what Git sees.' },
         { title: 'Empty or vague messages', fix: 'Write what changed, in a few words: "add login page", not "stuff".' },
         { title: 'Vim opens when you forget -m', fix: 'Type :q! and press Enter to leave, then run the commit again with -m "message".' },
       ],
       happening: 'Git does not save every keystroke. You choose when to take a snapshot. git commit packs everything on the staging shelf into one permanent, labelled snapshot with a short id like 1a2b3c4. Each snapshot points back at the one before it, which is the chain you see in the graph.',
+      talking: ['echo "text" >> file adds a line to the end of the file (a single > would replace it).'],
     },
   },
   {
@@ -504,14 +512,10 @@ export const cards: Card[] = [
     lane: 'main',
     steps: [
       { cmd: 'git log --oneline', output: ['5d6e7f8 (HEAD -> main) add second line', '1a2b3c4 add notes'], op: none },
-      {
-        cmd: 'git log -1',
-        output: ['commit 5d6e7f8 (HEAD -> main)', 'Author: Your Name <you@example.com>', 'Date:   today', '    add second line'],
-        op: none,
-      },
+
     ],
     drawer: {
-      commands: ['git log', 'git log --oneline', 'git log --oneline --graph --all', 'git log -1'],
+      commands: ['git log', 'git log --oneline', 'git log --oneline --graph --all'],
       mistakes: [
         { title: 'Stuck in the log view', fix: 'Press q to quit. Git shows long output in a pager.' },
         { title: 'Wondering where the history went', fix: 'git log only shows the branch you are on. Add --all to see every branch.' },
