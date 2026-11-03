@@ -45,8 +45,18 @@ const CARDS = [
   ['branch-idea', 'Separate your work. Keep main stable.', 4],
   ['branch-create', 'Create a branch. Switch to it. Start working.', 4],
   ['branch-merge', 'Feature complete? Bring it back into main.', 2],
+  ['oss-intro', 'Great software is built by people working together.', 0],
+  ['oss-issues', 'Find something to fix', 0],
+  ['oss-pull-requests', 'You can\u2019t push directly. So you propose instead.', 0],
+  ['oss-first-contrib', 'Let\u2019s contribute to MUKTI!', 0],
+  ['oss-fork', 'Make your own copy', 0],
+  ['oss-clone', 'Bring it onto your computer', 3],
+  ['oss-commit-push', 'Make the change. Save it. Send it up.', 3],
+  ['oss-create-pr', 'Propose your change to the original repository', 0],
+  ['oss-workflow', 'The whole process, in eight steps', 0],
+  ['oss-challenge', 'MUKTI Challenge: make it yours', 0],
 ]
-const LAST = 'branch-merge'
+const LAST = 'oss-challenge'
 /* Terminal entries expected after each press on the branching terminal cards (press 3 on branch-create is a reset). */
 const TLINES = { 'branch-create': [0, 1, 2, 0, 1], 'branch-merge': [0, 1, 2] }
 const STACK = ['open-source', 'mukti', 'personal-software', 'linux', 'linus', 'vc-problem', 'vc-idea', 'git-born', 'recap']
@@ -207,7 +217,7 @@ async function layout(browser) {
   for (const [w, h] of SIZES) {
     const page = await browser.newPage()
     await page.setViewport({ width: w, height: h })
-    for (const id of ['open-source', 'mukti', 'personal-software', 'linux', 'linus', 'vc-idea', 'git-born', 'git-vs-github', 'linux-repo', 'github', 'push', 'setup', 'why-branch', 'branch-idea', 'branch-create', 'branch-merge']) {
+    for (const id of ['open-source', 'mukti', 'personal-software', 'linux', 'linus', 'vc-idea', 'git-born', 'git-vs-github', 'linux-repo', 'github', 'push', 'setup', 'why-branch', 'branch-idea', 'branch-create', 'branch-merge', 'oss-intro', 'oss-issues', 'oss-pull-requests', 'oss-first-contrib', 'oss-fork', 'oss-clone', 'oss-commit-push', 'oss-create-pr', 'oss-workflow', 'oss-challenge']) {
       await page.goto(URL + '#/' + id, { waitUntil: 'networkidle0' })
       await page.reload({ waitUntil: 'networkidle0' })
       await settle(page, 900)
@@ -324,7 +334,7 @@ const server = spawn('npx', ['vite', 'preview', '--port', String(PORT), '--stric
 let browser
 try {
   for (let i = 0; i < 50; i++) { try { if ((await fetch(URL)).ok) break } catch { /* wait */ } await sleep(200) }
-  browser = await puppeteer.launch({ executablePath: CHROME, headless: true, args: ['--no-sandbox'] })
+  browser = await puppeteer.launch({ executablePath: CHROME, headless: true, args: ['--no-sandbox', '--disable-dev-shm-usage'] })
   await fullPass(browser)
   await directLoads(browser)
   await layout(browser)

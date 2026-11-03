@@ -324,6 +324,159 @@ function BornArt() {
   )
 }
 
+/* ---------- Open source contribution: forking one project into many hands ---------- */
+const FORKS: [number, number][] = [[-220, -60], [0, -100], [220, -60], [-150, 100], [150, 100]]
+function CollabArt() {
+  return (
+    <svg className="art" viewBox="0 0 800 640" role="img" aria-label="One shared project, forked and worked on by several people, feeding changes back">
+      <g transform="translate(400 150)">
+        <rect x="-130" y="-54" width="260" height="108" rx="20" fill="var(--lane-main)" />
+        <text x="0" y="8" textAnchor="middle" className="art-mono" fontSize="34" fill="var(--panel)">{'</>'}</text>
+      </g>
+      {FORKS.map(([dx, dy], i) => (
+        <g key={i} transform={`translate(${400 + dx} ${300 + dy})`}>
+          <line x1="0" y1={dy > 0 ? -60 : 60} x2={-dx * 0.18} y2={dy > 0 ? -130 - dy * 0.3 : 130 - dy * 0.1} stroke="var(--panel-line)" strokeWidth="4" />
+          <circle r="34" fill="var(--panel-2)" stroke={DOT_COLORS[i % 3]} strokeWidth="5" />
+          <text y="10" textAnchor="middle" className="art-mono" fontSize="34" fill={DOT_COLORS[i % 3]}>{'</>'}</text>
+        </g>
+      ))}
+      <text x="400" y="560" textAnchor="middle" className="art-text" fontSize="36" fill="var(--term-text)">Linux &middot; Firefox &middot; VS Code</text>
+      <text x="400" y="604" textAnchor="middle" className="art-text" fontSize="28" fill="var(--term-dim)">built in the open, by anyone who shows up</text>
+    </svg>
+  )
+}
+
+/* ---------- Issues: a card with coloured labels ---------- */
+const LABELS: [string, string][] = [
+  ['good first issue', 'var(--lane-main)'],
+  ['help wanted', 'var(--lane-remote)'],
+  ['bug', 'var(--lane-feature)'],
+  ['enhancement', DOT_COLORS[1]],
+]
+function IssueLabelsArt() {
+  return (
+    <svg className="art" viewBox="0 0 800 640" role="img" aria-label="A GitHub issue card with coloured labels: good first issue, help wanted, bug, enhancement">
+      <rect x="80" y="70" width="640" height="500" rx="26" fill="var(--panel-2)" stroke="var(--panel-line)" strokeWidth="4" />
+      <circle cx="140" cy="140" r="16" fill="var(--lane-main)" />
+      <text x="175" y="150" className="art-text" fontSize="36" fill="var(--term-text)">Button click does nothing on mobile</text>
+      <text x="140" y="196" className="art-mono" fontSize="34" fill="var(--term-dim)">#42 opened by a contributor</text>
+      <line x1="120" y1="230" x2="680" y2="230" stroke="var(--panel-line)" strokeWidth="2" />
+      {LABELS.map(([label, color], i) => {
+        const w = label.length * 17 + 50
+        const x = 140 + (i % 2) * 320
+        const y = 280 + Math.floor(i / 2) * 90
+        return (
+          <g key={label}>
+            <rect x={x} y={y} width={w} height="58" rx="29" fill={color} />
+            <text x={x + w / 2} y={y + 38} textAnchor="middle" className="art-text" fontSize="28" fill="var(--panel)">{label}</text>
+          </g>
+        )
+      })}
+    </svg>
+  )
+}
+
+/* ---------- Pull requests: changes become a reviewed proposal (vertical, so longer labels have room) ---------- */
+const PR_FLOW: [string, string][] = [
+  ['Your changes', 'var(--lane-main)'],
+  ['Pull request', 'var(--lane-feature)'],
+  ['Review', 'var(--lane-remote)'],
+  ['Merge?', 'var(--lane-main)'],
+]
+function PrFlowArt() {
+  const rowY = (i: number) => 110 + i * 140
+  return (
+    <svg className="art" viewBox="0 0 800 640" role="img" aria-label="Your changes become a pull request, go through review, and may be merged">
+      <line x1="150" y1={rowY(0)} x2="150" y2={rowY(PR_FLOW.length - 1)} stroke="var(--panel-line)" strokeWidth="8" strokeLinecap="round" />
+      {PR_FLOW.map(([label, color], i) => {
+        const y = rowY(i)
+        return (
+          <g key={label}>
+            <circle cx="150" cy={y} r="38" fill={color} stroke="var(--panel)" strokeWidth="8" />
+            <text x="150" y={y + 11} textAnchor="middle" className="art-text" fontSize="32" fill="var(--panel)">{i + 1}</text>
+            <text x="230" y={y + 12} className="art-text" fontSize="36" fill="var(--term-text)">{label}</text>
+          </g>
+        )
+      })}
+      <text x="400" y="600" textAnchor="middle" className="art-text" fontSize="28" fill="var(--term-dim)">opening a PR does not mean it is accepted</text>
+    </svg>
+  )
+}
+
+/* ---------- Fork / pull request direction: two repositories and an arrow between them ---------- */
+function RepoFlowArt({ left, right, badge, reverse }: { left: string; right: string; badge?: string; reverse?: boolean }) {
+  const a = reverse ? right : left
+  const b = reverse ? left : right
+  return (
+    <svg className="art" viewBox="0 0 800 640" role="img" aria-label={`${left} and ${right}, connected by an arrow`}>
+      <rect x="60" y="230" width="260" height="140" rx="22" fill="var(--panel-2)" stroke="var(--lane-main)" strokeWidth="6" />
+      <text x="190" y="290" textAnchor="middle" className="art-mono" fontSize="30" fill="var(--lane-main)">{'</>'}</text>
+      <text x="190" y="332" textAnchor="middle" className="art-text" fontSize="30" fill="var(--term-text)">{a}</text>
+
+      <rect x="480" y="230" width="260" height="140" rx="22" fill="var(--panel-2)" stroke="var(--lane-remote)" strokeWidth="6" />
+      <text x="610" y="290" textAnchor="middle" className="art-mono" fontSize="30" fill="var(--lane-remote)">{'</>'}</text>
+      <text x="610" y="332" textAnchor="middle" className="art-text" fontSize="30" fill="var(--term-text)">{b}</text>
+
+      <path d="M330 300 H470" stroke="var(--term-dim)" strokeWidth="8" strokeLinecap="round" />
+      <path d="M460 272 L500 300 L460 328 Z" fill="var(--term-dim)" />
+      {badge && (
+        <g transform="translate(400 190)">
+          <rect x="-120" y="-30" width="240" height="56" rx="28" fill="var(--lane-feature)" />
+          <text y="8" textAnchor="middle" className="art-text" fontSize="30" fill="var(--panel)">{badge}</text>
+        </g>
+      )}
+    </svg>
+  )
+}
+function ForkArt() { return <RepoFlowArt left="Original repository" right="Your fork" /> }
+function PrDirectionArt() { return <RepoFlowArt left="Your fork" right="Original repository" badge="Pull request" reverse /> }
+
+/* ---------- Complete workflow: eight steps, two rows ---------- */
+const WF_STEPS = ['Find issue', 'Fork it', 'Clone it', 'Edit files', 'Commit', 'Push', 'Open PR', 'Merge']
+function WorkflowArt() {
+  return (
+    <svg className="art" viewBox="0 0 800 640" role="img" aria-label="Eight workflow steps: find an issue, fork, clone, make changes, commit, push, open a pull request, review and merge">
+      {[0, 1].map((row) => (
+        <line key={row} x1="90" y1={230 + row * 220} x2="710" y2={230 + row * 220} stroke="var(--panel-line)" strokeWidth="6" strokeLinecap="round" />
+      ))}
+      {WF_STEPS.map((label, i) => {
+        const row = i < 4 ? 0 : 1
+        const col = i % 4
+        const x = 90 + col * (620 / 3)
+        const y = 230 + row * 220
+        return (
+          <g key={label}>
+            <circle cx={x} cy={y} r="34" fill={DOT_COLORS[i % 3]} stroke="var(--panel)" strokeWidth="7" />
+            <text x={x} y={y + 10} textAnchor="middle" className="art-text" fontSize="28" fill="var(--panel)">{i + 1}</text>
+            <text x={x} y={y + 64} textAnchor="middle" className="art-text" fontSize="30" fill="var(--term-text)">{label}</text>
+          </g>
+        )
+      })}
+    </svg>
+  )
+}
+
+/* ---------- MUKTI challenge: the six steps participants will follow ---------- */
+const CHALLENGE_STEPS = ['Start here', 'Find task', 'Complete it', 'Submit PR', 'Verify it', 'Troubleshoot']
+function ChallengeStepsArt() {
+  return (
+    <svg className="art" viewBox="0 0 800 640" role="img" aria-label="Six challenge steps: start here, find your task, complete it, submit your pull request, verify it, troubleshoot">
+      {CHALLENGE_STEPS.map((label, i) => {
+        const col = i % 3, row = Math.floor(i / 3)
+        const x = 160 + col * 240
+        const y = 210 + row * 230
+        return (
+          <g key={label}>
+            <rect x={x - 108} y={y - 70} width="216" height="140" rx="22" fill="var(--panel-2)" stroke={DOT_COLORS[i % 3]} strokeWidth="5" />
+            <text x={x} y={y - 18} textAnchor="middle" className="art-text" fontSize="34" fill={DOT_COLORS[i % 3]}>{i + 1}</text>
+            <text x={x} y={y + 30} textAnchor="middle" className="art-text" fontSize="30" fill="var(--term-text)">{label}</text>
+          </g>
+        )
+      })}
+    </svg>
+  )
+}
+
 export function StoryArt({ art }: { art: ArtId }) {
   switch (art) {
     case 'ring': return <RingArt />
@@ -333,6 +486,13 @@ export function StoryArt({ art }: { art: ArtId }) {
     case 'snapshots': return <SnapshotsArt />
     case 'born': return <BornArt />
     case 'audience': return <AudienceArt />
+    case 'collab': return <CollabArt />
+    case 'issueLabels': return <IssueLabelsArt />
+    case 'prFlow': return <PrFlowArt />
+    case 'forkFlow': return <ForkArt />
+    case 'prDirection': return <PrDirectionArt />
+    case 'workflowSteps': return <WorkflowArt />
+    case 'challengeSteps': return <ChallengeStepsArt />
     case 'mukti': return null
   }
 }

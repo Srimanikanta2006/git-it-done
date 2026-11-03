@@ -42,6 +42,17 @@ Check everything with `npm run build` then `npm run check` (headless Chrome: Spa
 
 The repository state is one continuing repository from `init` onwards. Sections A to C and the `github` and `setup` cards never change it.
 
+## Open Source Contribution Guide
+
+After Vijay's branching cards, one more presentation card (`oss-intro`) hands off to a separate, fully scrollable
+documentation site at `#/learn` (`src/contrib/`): GitHub Issues, Pull Requests, the full fork/clone/commit/push/PR
+tutorial, a quick-reference workflow page, the MUKTI Challenge (with its own Start/Task/Complete/Submit/Verify/
+Troubleshooting steps), and a resources page. It is a separate small app (`src/Root.tsx` switches between it and the
+presentation deck based on the `#/learn` hash prefix) with its own responsive CSS (`src/contrib/contrib.css`), so it
+does not touch the fixed-viewport slide engine. See `src/contrib/config.ts` for the pending MUKTI repository URL, demo
+issue URL, challenge-assignment mechanism and video URL, and `public/img/contrib/` for the screenshots still to add
+(each missing screenshot renders as a labelled placeholder naming the exact file to drop in).
+
 ## Add a card (data only)
 
 Add an object to the array in `src/cards.ts`. The id becomes the URL.

@@ -54,7 +54,9 @@ export interface StackScene {
 export type Section = 'hook' | 'stepback' | 'story' | 'git' | 'part2'
 export type Lane = 'main' | 'branch' | 'detour'
 export type VijayVisualId = 'problems' | 'branches' | 'switcher' | 'merge'
-export type ArtId = 'ring' | 'kernel' | 'linus' | 'chaos' | 'snapshots' | 'born' | 'mukti' | 'audience'
+export type ArtId =
+  | 'ring' | 'kernel' | 'linus' | 'chaos' | 'snapshots' | 'born' | 'mukti' | 'audience' | 'collab'
+  | 'issueLabels' | 'prFlow' | 'forkFlow' | 'prDirection' | 'workflowSteps' | 'challengeSteps'
 
 export type View =
   | 'messy' | 'hero' | 'story' | 'compare' | 'areas' | 'remote' | 'setup' | 'terminal' | 'stub' | 'challenge' | 'fullshot' | 'vijay'
@@ -75,6 +77,8 @@ export interface Card {
   /** Closing line shown as a highlighted chip (recap card). */
   final?: string
   tryIt?: string
+  /** A single call-to-action button rendered under the other chips (used to hand off to the contribution guide). */
+  cta?: { label: string; href: string }
   /** Show the kicker as large plain text (workshop opener line). */
   bigKicker?: boolean
   /** Mukti card: motto and its translation. */
@@ -94,6 +98,8 @@ export interface Card {
   strip?: boolean
   /** Where the file chip starts on strip cards. */
   file0?: FileStage
+  /** Terminal cards whose commands run in a separate practice repo: shows this note instead of the shared Git graph. */
+  noGraph?: string
   steps: Step[]
   drawer: {
     install?: boolean

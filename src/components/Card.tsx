@@ -40,7 +40,7 @@ export function Card({ cardIdx, done, applied, playing, instant, onStepDone, fra
       break
     case 'story':
       if (card.art === 'linus') panel = <LinusPanel picture={card.picture} />
-      else if (card.art === 'mukti') panel = <MuktiPanel tagline={card.tagline} links={card.links} />
+      else if (card.tagline || card.links) panel = <MuktiPanel tagline={card.tagline} links={card.links} />
       else panel = <div className="panel center">{card.art && <StoryArt art={card.art} />}</div>
       break
     case 'fullshot':
@@ -85,8 +85,10 @@ export function Card({ cardIdx, done, applied, playing, instant, onStepDone, fra
           <div className="graph-area">
             {card.strip && <FileStrip stage={fileStage(card, applied)} instant={instant} />}
             <div className="graph-wrap">
-              {card.visual ? <VijayVisual visual={card.visual} applied={applied} instant={instant} /> : <Graph repo={repo} instant={instant} compact={!!card.strip} />}
-              {!card.visual && repo.commits.length === 0 && <div className="graph-empty">No commits yet</div>}
+              {card.noGraph ? <div className="graph-empty">{card.noGraph}</div>
+                : card.visual ? <VijayVisual visual={card.visual} applied={applied} instant={instant} />
+                : <Graph repo={repo} instant={instant} compact={!!card.strip} />}
+              {!card.visual && !card.noGraph && repo.commits.length === 0 && <div className="graph-empty">No commits yet</div>}
             </div>
           </div>
         </div>
@@ -123,6 +125,7 @@ export function Card({ cardIdx, done, applied, playing, instant, onStepDone, fra
         {card.note && <div className="note-chip">{card.note}</div>}
         {card.final && <div className="final-chip">{card.final}</div>}
         {card.tryIt && <CommandChip label="Try it" cmd={card.tryIt} />}
+        {card.cta && <a className="btn cta-btn" href={card.cta.href}>{card.cta.label} &rarr;</a>}
       </div>
       <div className="card-right">{panel}</div>
     </div>
