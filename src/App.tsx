@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { cards } from './cards'
+import { cards, ROUTE_ALIASES } from './cards'
 import { Card } from './components/Card'
 import { Drawer } from './components/Drawer'
 import { PickerOverlay } from './components/OSPicker'
@@ -22,7 +22,8 @@ interface S {
 
 const last = cards.length - 1
 const fromHash = () => {
-  const id = window.location.hash.replace(/^#\/?/, '')
+  const raw = window.location.hash.replace(/^#\/?/, '')
+  const id = ROUTE_ALIASES[raw] ?? raw
   const i = cards.findIndex((c) => c.id === id)
   return i < 0 ? 0 : i
 }
@@ -67,14 +68,6 @@ export default function App() {
   const openDetails = useCallback((after?: () => void) => { afterSave.current = after; setDetails(true) }, [])
   const closeDetails = useCallback(() => { afterSave.current = undefined; setDetails(false) }, [])
   useEffect(() => { setDetailsOpener(openDetails); return () => setDetailsOpener(null) }, [openDetails])
-
-  const pickerSeen = useRef(false)
-  useEffect(() => {
-    if (cards[s.card].id === 'setup' && !pickerSeen.current) {
-      pickerSeen.current = true
-      setPicker(true)
-    }
-  }, [s.card])
 
   const put = (n: S) => { ref.current = n; setS(n) }
 
@@ -177,6 +170,8 @@ export default function App() {
   }, [s.card])
   useEffect(() => {
     const onHash = () => {
+      const alias = ROUTE_ALIASES[window.location.hash.replace(/^#\/?/, '')]
+      if (alias) window.location.hash = '#/' + alias
       const i = fromHash()
       if (i !== ref.current.card) navTo(i, 0)
     }

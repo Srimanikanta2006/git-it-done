@@ -3,11 +3,12 @@ import type { Card, CmdText } from '../engine/types'
 import { INSTALL, OPEN_TERMINAL, OS_LIST, useOS } from '../os'
 import { Cmd, CopyButton } from './Copy'
 import { missing, useUserDetails } from '../userDetails'
+import { resolveCard } from '../osCards'
 
 export function Drawer({ card, open, onClose }: { card: Card; open: boolean; onClose: () => void }) {
   const { os } = useOS()
   const { details } = useUserDetails()
-  const d = card.drawer
+  const d = resolveCard(card, os).drawer
   const resolve = (c: CmdText) => (typeof c === 'string' ? c : c.byOS[os])
   const osLabel = OS_LIST.find((o) => o.id === os)!.label
   return (
@@ -33,6 +34,15 @@ export function Drawer({ card, open, onClose }: { card: Card; open: boolean; onC
               <div className="cmd-row"><code><Cmd text={i.cmd} /></code><CopyButton text={i.cmd} /></div>
             </div>
           ))}
+        </section>
+      )}
+
+      {!!d.clicks?.length && (
+        <section>
+          <h3>Step by step ({osLabel})</h3>
+          <ol className="clicks">
+            {d.clicks.map((t) => <li key={t}>{t}</li>)}
+          </ol>
         </section>
       )}
 

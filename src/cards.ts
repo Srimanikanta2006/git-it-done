@@ -1,7 +1,11 @@
 import type { Card, StackScene } from './engine/types'
 import { vijayCards } from './vijay/cards'
+import { workshopCards } from './workshop'
 
 const none = { type: 'none' } as const
+
+/* Old links keep working: the single setup card was replaced by the workshop section (#/os is its first card). */
+export const ROUTE_ALIASES: Record<string, string> = { setup: 'os' }
 
 /* The stack, BACK to FRONT. Every scene in the zoom-out and peel-back is a slice of this list. */
 const STACK = ['recap', 'git-answer', 'git-born', 'vc-idea', 'vc-problem', 'linus', 'linux', 'personal-software', 'mukti', 'open-source']
@@ -618,58 +622,8 @@ export const cards: Card[] = [
       happening: 'Your computer and GitHub hold two separate copies of the same history. git remote add gives the online copy a nickname, origin. The first git push uploads your commits, sets up tracking, and triggers the login step: a browser sign-in, or a personal access token pasted in place of a password.',
     },
   },
-  {
-    id: 'setup',
-    rail: 'Setup',
-    section: 'git',
-    kicker: 'Okay, now it\u2019s time to get our hands dirty.',
-    bigKicker: true,
-    title: 'Let\u2019s get Git on your laptop.',
-    sentence: 'Three quick stages, once per computer.',
-    note: 'Also create your free GitHub account now. You need it before git push.',
-    view: 'setup',
-    lane: 'main',
-    steps: [
-      {
-        cmd: '', output: [], op: none, label: 'Open a terminal',
-        detail: {
-          windows: 'Use Git Bash (it comes with Git), so every command matches Mac and Linux.',
-          macos: 'Press Cmd+Space, type Terminal, press Enter.',
-          linux: 'Press Ctrl+Alt+T.',
-        },
-      },
-      {
-        cmd: '', output: [], op: none, label: 'Install Git',
-        detail: {
-          windows: 'Download it from git-scm.com and accept the defaults.',
-          macos: 'Check if it is there. If not, accept the Command Line Tools prompt.',
-          linux: 'Install it with your package manager.',
-        },
-      },
-      {
-        cmd: '', output: [], op: none, label: 'Tell Git who you are',
-        detail: 'Set your name and email once. Every snapshot you save carries them. Press U (or click Your details) and the commands fill in for you.',
-      },
-    ],
-    drawer: {
-      install: true,
-      commands: [
-        'git --version',
-        'git config --global user.name "{{name}}"',
-        'git config --global user.email "{{email}}"',
-        'git config --global init.defaultBranch main',
-      ],
-      mistakes: [
-        { title: '"git: command not found"', fix: 'Git is not installed yet, or you opened the terminal before installing. Install it, then open a fresh terminal.' },
-        { title: 'Windows: using Command Prompt or PowerShell', fix: 'Open Git Bash from the Start menu so every command in this guide works exactly as shown.' },
-        { title: 'No GitHub account yet', fix: 'Create the free account at github.com before you run git push. Without it the push cannot sign in.' },
-        { title: 'Using a different email than GitHub', fix: 'Use the same email as your GitHub account so your commits are linked to you.' },
-        { title: 'Can\u2019t install Git?', fix: 'Use GitHub Codespaces (needs a GitHub account; free monthly limit). Ask a volunteer for help.' },
-      ],
-      happening: 'Attendees must have their free GitHub account ready BEFORE they run git push, so create it during this stage or earlier. Git is a program, so it has to be installed. The terminal is a text window for talking to it. The name and email are written into every commit, which is how the history shows who did what.',
-      talking: ['Run each command together right after explaining it.'],
-    },
-  },
+  /* ---------- E. Workshop: choose a system, set up the laptop, go back to the commands ---------- */
+  ...workshopCards,
 
   /* ---------- Part 2 (Vijay): branching and merging ---------- */
   ...vijayCards,

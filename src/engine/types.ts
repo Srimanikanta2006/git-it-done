@@ -51,18 +51,29 @@ export interface StackScene {
   leave?: StackMove
 }
 
-export type Section = 'hook' | 'stepback' | 'story' | 'git' | 'part2'
+export type Section = 'hook' | 'stepback' | 'story' | 'git' | 'workshop' | 'part2'
 export type Lane = 'main' | 'branch' | 'detour'
 export type VijayVisualId = 'why' | 'branches' | 'create' | 'commit' | 'merge'
 export type ArtId =
   | 'ring' | 'kernel' | 'linus' | 'chaos' | 'snapshots' | 'born' | 'mukti' | 'audience' | 'collab'
   | 'issueLabels' | 'prFlow' | 'forkFlow' | 'prDirection' | 'workflowSteps' | 'challengeSteps'
+  | 'githubSignup' | 'codespaces' | 'ready'
 
 export type View =
-  | 'messy' | 'hero' | 'story' | 'compare' | 'areas' | 'remote' | 'setup' | 'terminal' | 'stub' | 'challenge' | 'fullshot' | 'vijay'
+  | 'messy' | 'hero' | 'story' | 'compare' | 'areas' | 'remote' | 'setup' | 'terminal' | 'stub' | 'challenge' | 'fullshot' | 'vijay' | 'oschoice'
 
 /** A real picture with alt text. credit is shown under it when set. */
 export interface Picture { src: string; alt: string; credit?: string; caption?: string }
+
+/** Per operating system overrides for a card. Steps must have the same length on every system. */
+export interface OSPart {
+  sentence?: string
+  bullets?: string[]
+  tryIt?: string
+  note?: string
+  steps?: Step[]
+  drawer?: Partial<Card['drawer']>
+}
 
 export interface Card {
   id: string
@@ -100,9 +111,22 @@ export interface Card {
   file0?: FileStage
   /** Terminal cards whose commands run in a separate practice repo: shows this note instead of the shared Git graph. */
   noGraph?: string
+  /** Terminal cards: show only the terminal (the commit graph is hidden). */
+  hideGraph?: boolean
+  /** Several copy chips under the bullets (one copy button per command). */
+  chips?: string[]
+  /** Small link line under the bullets. */
+  aside?: { text: string; href: string }
+  /** A button that opens the "Your details" window. */
+  detailsButton?: boolean
+  /** Overrides applied for the chosen operating system. */
+  os?: Record<OS, OSPart>
+  /** Steps are the same on every system, so `steps` is also what the engine counts. */
   steps: Step[]
   drawer: {
     install?: boolean
+    /** Exact click-path instructions, shown as a numbered list. */
+    clicks?: string[]
     commands?: CmdText[]
     mistakes?: { title: string; fix: string }[]
     happening: string

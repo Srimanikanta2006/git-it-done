@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useReducedMotion } from 'framer-motion'
 import type { Step } from '../engine/types'
 import { REPO, prompt, useOS } from '../os'
+import { TOKEN_LABEL, fill, useUserDetails, type Field } from '../userDetails'
 
 const CHAR_MS = 30
 const LINE_MS = 220
@@ -9,8 +10,12 @@ const LINE_MS = 220
 function Entry({ step, animate, onDone }: { step: Step; animate: boolean; onDone?: () => void }) {
   const { os } = useOS()
   const reduce = useReducedMotion()
-  const [n, setN] = useState(animate ? 0 : step.cmd.length)
-  const [o, setO] = useState(animate ? 0 : step.output.length)
+  const { details } = useUserDetails()
+  const show = (s: string) => fill(s, details).replace(/\{\{(name|email|ghuser|repo)\}\}/g, (_, f: Field) => '<' + TOKEN_LABEL[f] + '>')
+  const cmd = show(step.cmd)
+  const output = step.output.map(show)
+  const [n, setN] = useState(animate ? 0 : cmd.length)
+  const [o, setO] = useState(animate ? 0 : output.length)
   const cb = useRef(onDone)
   cb.current = onDone
 
@@ -19,7 +24,7 @@ function Entry({ step, animate, onDone }: { step: Step; animate: boolean; onDone
     const timers: number[] = []
     const t = (fn: () => void, ms: number) => timers.push(window.setTimeout(fn, ms))
     if (reduce) {
-      setN(step.cmd.length); setO(step.output.length)
+      setN(cmd.length); setO(output.length)
       t(() => cb.current?.(), 200)
       return () => timers.forEach(clearTimeout)
     }
@@ -27,28 +32,28 @@ function Entry({ step, animate, onDone }: { step: Step; animate: boolean; onDone
     const iv = window.setInterval(() => {
       i++
       setN(i)
-      if (i >= step.cmd.length) {
+      if (i >= cmd.length) {
         clearInterval(iv)
-        const lines = step.output.length
+        const lines = output.length
         t(() => {}, 0)
         for (let k = 1; k <= lines; k++) t(() => setO(k), 250 + k * LINE_MS)
         t(() => cb.current?.(), 350 + lines * LINE_MS + 300)
       }
     }, CHAR_MS)
     return () => { clearInterval(iv); timers.forEach(clearTimeout) }
-  }, [animate, reduce, step])
+  }, [animate, reduce, cmd, output.length])
 
-  const typing = animate && n < step.cmd.length
-  const shownN = animate ? n : step.cmd.length
-  const shownO = animate ? o : step.output.length
+  const typing = animate && n < cmd.length
+  const shownN = animate ? n : cmd.length
+  const shownO = animate ? o : output.length
   return (
     <div className="t-entry">
       <div className="t-line">
         <span className="t-prompt">{prompt(os)} </span>
-        <span>{step.cmd.slice(0, shownN)}</span>
+        <span>{cmd.slice(0, shownN)}</span>
         {typing && <span className="t-cursor" />}
       </div>
-      {step.output.slice(0, shownO).map((l, i) => (
+      {output.slice(0, shownO).map((l, i) => (
         <div key={i} className={'t-out' + (animate ? ' fade' : '')}>{l}</div>
       ))}
     </div>

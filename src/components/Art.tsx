@@ -493,10 +493,94 @@ export function StoryArt({ art }: { art: ArtId }) {
     case 'prDirection': return <PrDirectionArt />
     case 'workflowSteps': return <WorkflowArt />
     case 'challengeSteps': return <ChallengeStepsArt />
+    case 'githubSignup': return <SignupArt />
+    case 'codespaces': return <CodespacesArt />
+    case 'ready': return <ReadyArt />
     case 'mukti': return null
   }
 }
 
+/* ---------- Workshop: operating system tiles ---------- */
+const OS_BLURB: Record<OS, string> = {
+  windows: 'Windows 10 or 11',
+  macos: 'MacBook, iMac or Mac mini',
+  linux: 'Ubuntu, Debian, Fedora and friends',
+}
+export function OSTiles() {
+  const { os, setOS, detected } = useOS()
+  return (
+    <div className="os-tiles" role="radiogroup" aria-label="Operating system">
+      {OS_LIST.map((o) => (
+        <button
+          key={o.id} role="radio" aria-checked={os === o.id}
+          className={'os-tile' + (os === o.id ? ' on' : '')}
+          onClick={() => setOS(o.id)}
+        >
+          <span className="os-tile-name">{o.label}</span>
+          <span className="os-tile-sub">{OS_BLURB[o.id]}</span>
+          {detected === o.id && <span className="os-detected">detected</span>}
+          <span className="os-tile-check" aria-hidden>{os === o.id ? '\u2713' : ''}</span>
+        </button>
+      ))}
+    </div>
+  )
+}
+
+/* ---------- Workshop: illustrations (no terminal needed) ---------- */
+function SignupArt() {
+  return (
+    <svg className="art" viewBox="0 0 800 640" role="img" aria-label="A sign up form with email, password and username fields and a free plan button">
+      <rect x="130" y="70" width="540" height="500" rx="28" fill="var(--panel-2)" stroke="var(--lane-remote)" strokeWidth="6" />
+      <text x="400" y="145" textAnchor="middle" className="art-text" fontSize="44" fill="var(--term-text)">Sign up for GitHub</text>
+      {['Email', 'Password', 'Username'].map((label, i) => (
+        <g key={label}>
+          <rect x="190" y={180 + i * 90} width="420" height="64" rx="14" fill="var(--panel)" stroke="var(--panel-line)" strokeWidth="3" />
+          <text x="215" y={222 + i * 90} className="art-text" fontSize="30" fill="var(--term-dim)">{label}</text>
+        </g>
+      ))}
+      <rect x="190" y="470" width="420" height="64" rx="32" fill="var(--lane-main)" />
+      <text x="400" y="512" textAnchor="middle" className="art-text" fontSize="32" fill="var(--panel)">Choose the free plan</text>
+    </svg>
+  )
+}
+
+function CodespacesArt() {
+  return (
+    <svg className="art" viewBox="0 0 800 640" role="img" aria-label="A browser window containing a code editor and a terminal">
+      <rect x="60" y="80" width="680" height="480" rx="28" fill="var(--panel-2)" stroke="var(--lane-remote)" strokeWidth="6" />
+      <line x1="60" y1="150" x2="740" y2="150" stroke="var(--panel-line)" strokeWidth="3" />
+      {[0, 1, 2].map((i) => <circle key={i} cx={105 + i * 36} cy="115" r="10" fill={DOT_COLORS[i]} />)}
+      <rect x="250" y="98" width="440" height="34" rx="17" fill="var(--panel)" />
+      <text x="470" y="123" textAnchor="middle" className="art-mono" fontSize="22" fill="var(--term-dim)">github.com/codespaces</text>
+      <rect x="90" y="180" width="270" height="230" rx="14" fill="var(--panel)" />
+      {[0, 1, 2, 3].map((i) => <rect key={i} x="115" y={210 + i * 48} width={170 - i * 22} height="16" rx="8" fill="var(--lane-remote)" opacity="0.7" />)}
+      <rect x="380" y="180" width="330" height="230" rx="14" fill="var(--panel)" />
+      {[0, 1, 2, 3, 4].map((i) => <rect key={i} x="405" y={208 + i * 38} width={250 - ((i * 53) % 110)} height="14" rx="7" fill="var(--term-dim)" opacity="0.6" />)}
+      <rect x="90" y="430" width="620" height="110" rx="14" fill="var(--panel)" />
+      <text x="115" y="480" className="art-mono" fontSize="28" fill="var(--lane-main)">$ git --version</text>
+      <text x="115" y="520" className="art-mono" fontSize="28" fill="var(--term-text)">git version 2.x.y</text>
+    </svg>
+  )
+}
+
+const READY_ITEMS = ['Visual Studio Code', 'Git', 'GitHub account', 'GitHub command line', 'Your identity']
+function ReadyArt() {
+  return (
+    <svg className="art" viewBox="0 0 800 640" role="img" aria-label="A checklist of the five things installed, all ticked">
+      {READY_ITEMS.map((label, i) => {
+        const y = 90 + i * 100
+        return (
+          <g key={label}>
+            <rect x="120" y={y} width="560" height="76" rx="20" fill="var(--panel-2)" stroke={DOT_COLORS[i % 3]} strokeWidth="4" />
+            <circle cx="170" cy={y + 38} r="22" fill={DOT_COLORS[i % 3]} />
+            <path d={`M${160} ${y + 38} l8 9 l16 -18`} fill="none" stroke="var(--panel)" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
+            <text x="220" y={y + 49} className="art-text" fontSize="34" fill="var(--term-text)">{label}</text>
+          </g>
+        )
+      })}
+    </svg>
+  )
+}
 /* ---------- Going remote: a laptop, a cloud, and an arrow that is not used yet ---------- */
 export function RemoteArt() {
   return (

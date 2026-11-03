@@ -1,12 +1,15 @@
 import { useEffect, useMemo } from 'react'
 import { cards } from '../cards'
 import { fileStage, replay } from '../engine/reducer'
-import { Compare, Hero, LinusPanel, MessyShot, MuktiPanel, RemoteArt, SetupPanel, ShotFigure, StoryArt, StubPanel } from './Art'
+import { Compare, Hero, OSTiles, LinusPanel, MessyShot, MuktiPanel, RemoteArt, SetupPanel, ShotFigure, StoryArt, StubPanel } from './Art'
 import { CommandChip } from './Copy'
 import { Graph } from './Graph'
 import { FileStrip } from './Panels'
 import { Terminal } from './Terminal'
 import { VijayVisual } from '../vijay/VijayVisual'
+import { resolveCard } from '../osCards'
+import { useOS } from '../os'
+import { askDetails, useUserDetails } from '../userDetails'
 
 export interface CardProps {
   cardIdx: number
@@ -20,7 +23,9 @@ export interface CardProps {
 }
 
 export function Card({ cardIdx, done, applied, playing, instant, onStepDone, framed = false }: CardProps) {
-  const card = cards[cardIdx]
+  const { os } = useOS()
+  const { filled } = useUserDetails()
+  const card = useMemo(() => resolveCard(cards[cardIdx], os), [cardIdx, os])
   const repo = useMemo(() => replay(cards, cardIdx, applied), [cardIdx, applied])
 
   // A reset step ("fresh") types nothing: finish it at once so it never costs an extra press.
@@ -63,6 +68,9 @@ export function Card({ cardIdx, done, applied, playing, instant, onStepDone, fra
     case 'setup':
       panel = <div className="panel"><SetupPanel steps={card.steps} shown={applied} /></div>
       break
+    case 'oschoice':
+      panel = <div className="panel os-tiles-panel"><OSTiles /></div>
+      break
     case 'stub':
       panel = <div className="panel center"><StubPanel /></div>
       break
@@ -79,8 +87,13 @@ export function Card({ cardIdx, done, applied, playing, instant, onStepDone, fra
       )
       break
     default:
-      panel = (
+      panel = card.hideGraph ? (
+        <div className="panel terminal-only">
+          <Terminal key={from} steps={card.steps.slice(from, done)} playing={playing} onDone={onStepDone} />
+        </div>
+      ) : (
         <div className={'panel split' + (card.strip ? ' has-strip' : '') + (card.visual ? ' vj-split' : '')}>
+
           <Terminal key={from} steps={card.steps.slice(from, done)} playing={playing} onDone={onStepDone} />
           <div className="graph-area">
             {card.strip && <FileStrip stage={fileStage(card, applied)} instant={instant} />}
@@ -109,11 +122,12 @@ export function Card({ cardIdx, done, applied, playing, instant, onStepDone, fra
   }
 
   const weight = card.sentence.length + (card.bullets ?? []).join('').length + (card.note ?? '').length
-  const dense = (card.view === 'story' && weight > 260) || card.view === 'vijay' || !!card.visual
+  const dense = (card.view === 'story' && weight > 260) || card.view === 'vijay' || card.section === 'workshop' || !!card.visual
   const vjWide = card.view === 'vijay' || !!card.visual
 
   return (
-    <div className={'card' + (framed ? ' framed' : '') + (card.view === 'messy' ? ' wide' : '') + (dense ? ' dense' : '') + (vjWide ? ' vj-wide' : '')}>
+    <div className={'card' + (framed ? ' framed' : '') + (card.view === 'messy' ? ' wide' : '') + (dense ? ' dense' : '') + (vjWide ? ' vj-wide' : '') + (card.chips ? ' wide-left' : '')}>
+
       <div className="card-left">
         <div className={'kicker' + (card.bigKicker ? ' big' : '')}>{card.kicker}</div>
         <h1>{card.title}</h1>
@@ -126,7 +140,18 @@ export function Card({ cardIdx, done, applied, playing, instant, onStepDone, fra
         {card.note && <div className="note-chip">{card.note}</div>}
         {card.final && <div className="final-chip">{card.final}</div>}
         {card.tryIt && <CommandChip label="Try it" cmd={card.tryIt} />}
-        {card.cta && <a className="btn cta-btn" href={card.cta.href}>{card.cta.label} &rarr;</a>}
+        {card.chips && (
+          <div className="chip-stack">
+            {card.chips.map((c) => <CommandChip key={c} cmd={c} />)}
+          </div>
+        )}
+        {card.detailsButton && (
+          <button className="btn details-btn" onClick={() => askDetails()}>
+            {filled ? 'Edit your details' : 'Add your details'} (press U)
+          </button>
+        )}
+        {card.aside && <a className="aside-link" href={card.aside.href}>{card.aside.text} &rarr;</a>}
+        {card.cta && <a className={'btn cta-btn' + (card.id === 'ready' ? ' big' : '')} href={card.cta.href}>{card.cta.label} &rarr;</a>}
       </div>
       <div className="card-right">{panel}</div>
     </div>
