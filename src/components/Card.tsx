@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { cards } from '../cards'
 import { fileStage, replay } from '../engine/reducer'
 import { Compare, Hero, LinusPanel, MessyShot, MuktiPanel, RemoteArt, SetupPanel, ShotFigure, StoryArt, StubPanel } from './Art'
@@ -6,6 +6,7 @@ import { CommandChip } from './Copy'
 import { Graph } from './Graph'
 import { FileStrip } from './Panels'
 import { Terminal } from './Terminal'
+import { VijayVisual } from '../vijay/VijayVisual'
 
 export interface CardProps {
   cardIdx: number
@@ -21,6 +22,13 @@ export interface CardProps {
 export function Card({ cardIdx, done, applied, playing, instant, onStepDone, framed = false }: CardProps) {
   const card = cards[cardIdx]
   const repo = useMemo(() => replay(cards, cardIdx, applied), [cardIdx, applied])
+
+  // A reset step ("fresh") types nothing: finish it at once so it never costs an extra press.
+  const lastStep = card.steps[done - 1]
+  useEffect(() => { if (playing && lastStep?.fresh) onStepDone() }, [playing, lastStep, onStepDone])
+  // The terminal restarts after the latest reset step.
+  let from = 0
+  card.steps.slice(0, done).forEach((st, i) => { if (st.fresh) from = i + 1 })
 
   let panel
   switch (card.view) {
@@ -58,6 +66,9 @@ export function Card({ cardIdx, done, applied, playing, instant, onStepDone, fra
     case 'stub':
       panel = <div className="panel center"><StubPanel /></div>
       break
+    case 'vijay':
+      panel = <div className="panel vj-panel"><VijayVisual visual={card.visual ?? 'problems'} applied={applied} instant={instant} /></div>
+      break
     case 'challenge':
       panel = (
         <div className="panel challenge">
@@ -70,12 +81,12 @@ export function Card({ cardIdx, done, applied, playing, instant, onStepDone, fra
     default:
       panel = (
         <div className={'panel split' + (card.strip ? ' has-strip' : '')}>
-          <Terminal steps={card.steps.slice(0, done)} playing={playing} onDone={onStepDone} />
+          <Terminal key={from} steps={card.steps.slice(from, done)} playing={playing} onDone={onStepDone} />
           <div className="graph-area">
             {card.strip && <FileStrip stage={fileStage(card, applied)} instant={instant} />}
             <div className="graph-wrap">
-              <Graph repo={repo} instant={instant} compact={!!card.strip} />
-              {repo.commits.length === 0 && <div className="graph-empty">No commits yet</div>}
+              {card.visual ? <VijayVisual visual={card.visual} applied={applied} instant={instant} /> : <Graph repo={repo} instant={instant} compact={!!card.strip} />}
+              {!card.visual && repo.commits.length === 0 && <div className="graph-empty">No commits yet</div>}
             </div>
           </div>
         </div>
@@ -96,7 +107,7 @@ export function Card({ cardIdx, done, applied, playing, instant, onStepDone, fra
   }
 
   const weight = card.sentence.length + (card.bullets ?? []).join('').length + (card.note ?? '').length
-  const dense = card.view === 'story' && weight > 260
+  const dense = (card.view === 'story' && weight > 260) || card.view === 'vijay' || !!card.visual
 
   return (
     <div className={'card' + (framed ? ' framed' : '') + (card.view === 'messy' ? ' wide' : '') + (dense ? ' dense' : '')}>

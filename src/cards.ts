@@ -1,4 +1,5 @@
 import type { Card, StackScene } from './engine/types'
+import { vijayCards } from './vijay/cards'
 
 const none = { type: 'none' } as const
 
@@ -669,6 +670,9 @@ export const cards: Card[] = [
       talking: ['Run each command together right after explaining it.'],
     },
   },
+
+  /* ---------- Part 2 (Vijay): branching and merging ---------- */
+  ...vijayCards,
 ]
 
 /* Catch data mistakes early: every stack layer must be a real card and the front must be last. */

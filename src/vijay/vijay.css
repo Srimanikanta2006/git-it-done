@@ -1,0 +1,22 @@
+/* Branching section only. Tokens from theme.css, sizes from --u. */
+.panel.vj-panel { display: flex; flex-direction: column; justify-content: center; gap: calc(var(--u) * 1); padding: calc(var(--u) * 1.6); }
+.vj-scene { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; justify-content: center; }
+.vj-caption { text-align: center; font-size: calc(var(--u) * 2.1); font-weight: 700; color: var(--lane-main); min-height: calc(var(--u) * 3); animation: fadein 0.4s ease-out both; }
+.vj-caption.two { display: grid; gap: calc(var(--u) * 0.2); min-height: calc(var(--u) * 6); align-content: start; }
+.vj-caption.two b { font-size: calc(var(--u) * 1.8); color: var(--lane-feature); letter-spacing: 0.02em; }
+.vj-caption.two span { font-size: calc(var(--u) * 2.1); color: var(--lane-main); }
+.pulse-soft { animation: vj-soft 1.6s ease-in-out infinite; }
+@keyframes vj-soft { 50% { opacity: 0.45; } }
+
+/* branch selector (card 3) */
+.vj-switch { display: grid; gap: calc(var(--u) * 0.6); align-content: center; padding: calc(var(--u) * 0.4) calc(var(--u) * 1); min-height: calc(var(--u) * 8); }
+.vj-row { display: flex; align-items: center; gap: calc(var(--u) * 1); }
+.vj-slot { flex: none; width: calc(var(--u) * 7); display: flex; justify-content: flex-end; }
+.vj-head { font-family: var(--font-code); font-weight: 700; font-size: calc(var(--u) * 1.5); color: var(--head); border: 3px dashed var(--head); border-radius: 99px; padding: 0 calc(var(--u) * 0.8); }
+.vj-pill { font-family: var(--font-code); font-weight: 700; font-size: calc(var(--u) * 2); color: var(--panel); border-radius: 99px; padding: calc(var(--u) * 0.1) calc(var(--u) * 1.4); box-shadow: 0 0 0 0 var(--head); }
+.vj-pill.on { box-shadow: 0 0 0 3px var(--head); }
+.vj-badge { background: var(--lane-main); color: var(--panel); font-weight: 700; font-size: calc(var(--u) * 1.5); border-radius: 99px; padding: calc(var(--u) * 0.15) calc(var(--u) * 1); }
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse-soft, .vj-caption { animation: none; }
+}

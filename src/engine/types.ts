@@ -24,6 +24,8 @@ export interface Step {
   label?: string
   /** Longer text for this step, optionally different per operating system. */
   detail?: string | Record<OS, string>
+  /** Terminal cards: this step is a reset. The terminal clears and later entries start from an empty screen. */
+  fresh?: boolean
 }
 
 export type CmdText = string | { label?: string; byOS: Record<OS, string> }
@@ -51,10 +53,11 @@ export interface StackScene {
 
 export type Section = 'hook' | 'stepback' | 'story' | 'git' | 'part2'
 export type Lane = 'main' | 'branch' | 'detour'
+export type VijayVisualId = 'problems' | 'branches' | 'switcher' | 'merge'
 export type ArtId = 'ring' | 'kernel' | 'linus' | 'chaos' | 'snapshots' | 'born' | 'mukti' | 'audience'
 
 export type View =
-  | 'messy' | 'hero' | 'story' | 'compare' | 'areas' | 'remote' | 'setup' | 'terminal' | 'stub' | 'challenge' | 'fullshot'
+  | 'messy' | 'hero' | 'story' | 'compare' | 'areas' | 'remote' | 'setup' | 'terminal' | 'stub' | 'challenge' | 'fullshot' | 'vijay'
 
 /** A real picture with alt text. credit is shown under it when set. */
 export interface Picture { src: string; alt: string; credit?: string; caption?: string }
@@ -82,6 +85,8 @@ export interface Card {
   picture?: Picture
   view: View
   art?: ArtId
+  /** Branching section: which scripted visual to draw (view 'vijay', or beside the terminal on a 'terminal' card). */
+  visual?: VijayVisualId
   hero?: string
   lane: Lane
   into?: TransitionKind

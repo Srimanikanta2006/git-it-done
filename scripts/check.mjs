@@ -41,7 +41,14 @@ const CARDS = [
   ['github', 'Now we need GitHub.', 0],
   ['push', 'Send it to GitHub', 2],
   ['setup', 'Let\u2019s get Git on your laptop.', 3],
+  ['why-branch', 'One project. Multiple developers. How do we manage the work?', 2],
+  ['branch-idea', 'Separate your work. Keep main stable.', 4],
+  ['branch-create', 'Create a branch. Switch to it. Start working.', 4],
+  ['branch-merge', 'Feature complete? Bring it back into main.', 2],
 ]
+const LAST = 'branch-merge'
+/* Terminal entries expected after each press on the branching terminal cards (press 3 on branch-create is a reset). */
+const TLINES = { 'branch-create': [0, 1, 2, 0, 1], 'branch-merge': [0, 1, 2] }
 const STACK = ['open-source', 'mukti', 'personal-software', 'linux', 'linus', 'vc-problem', 'vc-idea', 'git-born', 'recap']
 const wait = (a, b) => (STACK.includes(a) || STACK.includes(b) ? 5500 : 1900)
 const idx = (id) => CARDS.findIndex((c) => c[0] === id)
@@ -97,6 +104,9 @@ function expect(label, s, id, done) {
   const i = idx(id)
   if (s.id !== id) return fail(`${label}: expected card ${id}, hash is ${s.id}`)
   if (!s.h1s.includes(CARDS[i][1])) fail(`${label}: heading "${CARDS[i][1]}" not on screen (${s.h1s.join(' | ')})`)
+  if (TLINES[id]) {
+    if (s.lines !== TLINES[id][done]) fail(`${label}: terminal shows ${s.lines} entries, expected ${TLINES[id][done]}`)
+  }
   const g = graphAt(id, done)
   if (g) {
     if (!s.graph) return fail(`${label}: no graph on ${id}`)
@@ -139,7 +149,7 @@ async function fullPass(browser) {
   // advance on the last card does nothing
   await page.keyboard.press('Space'); await settle(page, 600)
   const end = await readState(page)
-  if (end.id !== 'setup') fail('Space on the last card moved to ' + end.id)
+  if (end.id !== LAST) fail('Space on the last card moved to ' + end.id)
   if (!end.nextDisabled) fail('Next button is not disabled on the last card')
 
   let lefts = 0
@@ -197,12 +207,12 @@ async function layout(browser) {
   for (const [w, h] of SIZES) {
     const page = await browser.newPage()
     await page.setViewport({ width: w, height: h })
-    for (const id of ['open-source', 'mukti', 'personal-software', 'linux', 'linus', 'vc-idea', 'git-born', 'git-vs-github', 'linux-repo', 'github', 'push', 'setup']) {
+    for (const id of ['open-source', 'mukti', 'personal-software', 'linux', 'linus', 'vc-idea', 'git-born', 'git-vs-github', 'linux-repo', 'github', 'push', 'setup', 'why-branch', 'branch-idea', 'branch-create', 'branch-merge']) {
       await page.goto(URL + '#/' + id, { waitUntil: 'networkidle0' })
       await page.reload({ waitUntil: 'networkidle0' })
       await settle(page, 900)
       await closePicker(page)
-      const steps = id === 'setup' ? 3 : id === 'push' ? 2 : 0
+      const steps = id === 'setup' ? 3 : id === 'push' ? 2 : (CARDS[idx(id)][2] ?? 0)
       for (let i = 0; i < steps; i++) { await page.keyboard.press('Space'); await settle(page, id === 'push' ? 2600 : 600) }
       await sleep(900)
       await page.screenshot({ path: `scripts/shots/${id}-${w}x${h}.png` })
