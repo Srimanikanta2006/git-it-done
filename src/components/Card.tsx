@@ -22,6 +22,9 @@ export interface CardProps {
   framed?: boolean
 }
 
+/** Keeps a command option such as --version in one piece when a line wraps. */
+const nb = (s: string) => s.replace(/--(?=\w)/g, '--\u2060')
+
 export function Card({ cardIdx, done, applied, playing, instant, onStepDone, framed = false }: CardProps) {
   const { os } = useOS()
   const { filled } = useUserDetails()
@@ -126,18 +129,17 @@ export function Card({ cardIdx, done, applied, playing, instant, onStepDone, fra
   const vjWide = card.view === 'vijay' || !!card.visual
 
   return (
-    <div className={'card' + (framed ? ' framed' : '') + (card.view === 'messy' ? ' wide' : '') + (dense ? ' dense' : '') + (vjWide ? ' vj-wide' : '') + (card.chips ? ' wide-left' : '')}>
-
+    <div className={'card' + (framed ? ' framed' : '') + (card.view === 'messy' ? ' wide' : '') + (dense ? ' dense' : '') + (vjWide ? ' vj-wide' : '') + (card.section === 'workshop' && card.view === 'terminal' ? ' wide-left' : '') + (card.chips ? ' wider-left' : '')}>
       <div className="card-left">
         <div className={'kicker' + (card.bigKicker ? ' big' : '')}>{card.kicker}</div>
         <h1>{card.title}</h1>
-        <p className="sentence">{card.sentence}</p>
+        <p className="sentence">{nb(card.sentence)}</p>
         {card.bullets && (
           <ul className="bullets">
-            {card.bullets.map((b) => <li key={b}>{b}</li>)}
+            {card.bullets.map((b) => <li key={b}>{nb(b)}</li>)}
           </ul>
         )}
-        {card.note && <div className="note-chip">{card.note}</div>}
+        {card.note && <div className="note-chip">{nb(card.note)}</div>}
         {card.final && <div className="final-chip">{card.final}</div>}
         {card.tryIt && <CommandChip label="Try it" cmd={card.tryIt} />}
         {card.chips && (

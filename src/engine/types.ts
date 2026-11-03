@@ -127,6 +127,8 @@ export interface Card {
     install?: boolean
     /** Exact click-path instructions, shown as a numbered list. */
     clicks?: string[]
+    /** Extra titled lists, shown after the common mistakes (for example a backup method or safety rules). */
+    sections?: { title: string; items: string[]; ordered?: boolean }[]
     commands?: CmdText[]
     mistakes?: { title: string; fix: string }[]
     happening: string

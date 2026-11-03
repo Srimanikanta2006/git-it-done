@@ -69,6 +69,15 @@ export function Drawer({ card, open, onClose }: { card: Card; open: boolean; onC
         </section>
       )}
 
+      {d.sections?.map((s) => (
+        <section key={s.title}>
+          <h3>{s.title}</h3>
+          {s.ordered
+            ? <ol className="clicks">{s.items.map((i) => <li key={i}>{i}</li>)}</ol>
+            : <ul className="talking">{s.items.map((i) => <li key={i}>{i}</li>)}</ul>}
+        </section>
+      ))}
+
       <section>
         <h3>In plain English</h3>
         <p>{d.happening}</p>

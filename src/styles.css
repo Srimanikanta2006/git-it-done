@@ -318,3 +318,8 @@ h1 { margin: 0; text-wrap: balance; font-weight: 700; letter-spacing: -0.04em; l
 .cta-btn.big { font-size: calc(var(--u) * 2.2); padding: calc(var(--u) * 0.8) calc(var(--u) * 2); }
 .drawer .clicks { margin: 0; padding-left: calc(var(--u) * 1.8); display: grid; gap: calc(var(--u) * 0.5); }
 @media (max-width: 899px) { .card.wide-left { grid-template-columns: 1fr; } }
+.card.wide-left .chip-cmd { flex-wrap: nowrap; }
+.card.wide-left .chip-cmd code { flex: 1 1 0; min-width: 0; }
+.card.wide-left .copy-btn { flex: none; }
+.card.wider-left { grid-template-columns: 58fr 42fr; }
+@media (max-width: 899px) { .card.wider-left { grid-template-columns: 1fr; } }

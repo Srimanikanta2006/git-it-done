@@ -551,7 +551,7 @@ function CodespacesArt() {
       <line x1="60" y1="150" x2="740" y2="150" stroke="var(--panel-line)" strokeWidth="3" />
       {[0, 1, 2].map((i) => <circle key={i} cx={105 + i * 36} cy="115" r="10" fill={DOT_COLORS[i]} />)}
       <rect x="250" y="98" width="440" height="34" rx="17" fill="var(--panel)" />
-      <text x="470" y="123" textAnchor="middle" className="art-mono" fontSize="22" fill="var(--term-dim)">github.com/codespaces</text>
+      <text x="470" y="123" textAnchor="middle" className="art-mono" fontSize="30" fill="var(--term-dim)">github.com/codespaces</text>
       <rect x="90" y="180" width="270" height="230" rx="14" fill="var(--panel)" />
       {[0, 1, 2, 3].map((i) => <rect key={i} x="115" y={210 + i * 48} width={170 - i * 22} height="16" rx="8" fill="var(--lane-remote)" opacity="0.7" />)}
       <rect x="380" y="180" width="330" height="230" rx="14" fill="var(--panel)" />

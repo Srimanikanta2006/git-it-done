@@ -31,19 +31,15 @@ const STEPS: Record<string, Record<OS, Step[]>> = {
     step('gh auth login', [
       '? Where do you use GitHub? GitHub.com',
       '? Preferred protocol for Git? HTTPS',
-      '? Authenticate Git with your GitHub credentials? Yes',
-      '? How to authenticate? Login with a web browser',
-      '! One-time code: ABCD-1234 (an example, yours differs)',
+      '? Authenticate Git with GitHub? Yes',
+      '? How to log in? A web browser',
+      '! Code: ABCD-1234 (example only)',
       '\u2713 Authentication complete.',
     ]),
     step('gh auth setup-git'),
-    step('gh auth status', ['github.com', '  \u2713 Logged in to github.com account <your-username>']),
+    step('gh auth status', ['github.com', '  \u2713 Logged in to github.com']),
   ]),
   identity: everyOS([
-    step('git config --global user.name "{{name}}"'),
-    step('git config --global user.email "{{email}}"'),
-    step('git config --global init.defaultBranch main'),
-    step('git config --global core.editor "code --wait"'),
     step('git config --global --list', ['user.name={{name}}', 'user.email={{email}}', 'init.defaultbranch=main', 'core.editor=code --wait']),
   ]),
 }
