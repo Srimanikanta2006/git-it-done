@@ -314,7 +314,7 @@ All presentation content lives in `src/cards.ts` and `src/vijay/cards.ts` as pla
 | `areas` | Three-area diagram | Working dir → staging → repo |
 | `remote` | Remote diagram | Local ↔ GitHub relationship |
 | `compare` | Side-by-side | Comparison views |
-| `setup` | Setup instructions | Workshop setup card |
+| `oschoice` | Operating system tiles | First workshop card (`os`) |
 | `vijay` | Branching visuals | One shared Git-graph component across all 5 branching cards |
 | `fullshot` | Full screenshot | Large image cards |
 | `stub` | Placeholder | Cards pending content |
@@ -340,9 +340,26 @@ All presentation content lives in `src/cards.ts` and `src/vijay/cards.ts` as pla
 `git-vs-github` → `three-areas` → `init` → `status` → `add` → `commit` → `log` → `github` → `push`
 > Hands-on Git commands with animated terminal and live commit graph. The repository state is **one continuing repo** from `init` onwards.
 
-### Section E — Workshop Opener
-`setup`
-> Open a terminal, install Git, configure name and email. The OS picker opens automatically on first visit.
+### Section E - Workshop Setup (replaces the old single `setup` card)
+Content comes from the volunteer handbook. Each card has its own route:
+
+| Card | Route | Notes |
+| --- | --- | --- |
+| os | `#/os` | three big operating system tiles on the card, auto-detected; O still opens the popup |
+| vscode | `#/vscode` | Step 1 of 6, terminal panel (no commit graph) |
+| git-install | `#/git-install` | Step 2 of 6 |
+| github-account | `#/github-account` | Step 3 of 6, illustration only |
+| gh-install | `#/gh-install` | Step 4 of 6, part 1 |
+| gh-login | `#/gh-login` | Step 4 of 6, part 2 (browser sign-in, token backup in the drawer) |
+| identity | `#/identity` | Step 5 of 6, four copy chips filled from Your details (U) |
+| codespaces | `#/codespaces` | Plan B, illustration only |
+| ready | `#/ready` | "Back to git init" button jumps to `#/init` |
+
+`#/setup` still works: it redirects to `#/os` (`ROUTE_ALIASES` in `src/cards.ts`). The text, terminal steps and drawer of vscode, git-install and gh-install change with the chosen system (Windows, macOS, Linux); the choice is saved. These cards never change the repository state (every step uses `op: none`), so going back to `push` or loading `#/init`, `#/push` or `#/ready` directly still rebuilds the right graph. Vijay's branching cards follow `ready`.
+
+Files: `src/workshop.ts` (structure, routes, terminal steps), `src/workshopContent.ts` (handbook wording, per-system text, drawers), `src/osCards.ts` (picks the per-system version of a card).
+
+Checks: `npm run check` includes a workshop fit check (nine cards x three systems x 1920x1080 and 1280x720, card and drawer). `ONLY=fit npm run check` runs just the workshop checks; screenshots go to `scripts/shots/workshop/`.
 
 ### Section F — Branching & Open Source (Vijay)
 Branching theory → merging → open source contribution → MUKTI Challenge handoff to the contribution guide.
