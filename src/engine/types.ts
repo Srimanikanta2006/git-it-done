@@ -55,8 +55,8 @@ export type Section = 'hook' | 'stepback' | 'story' | 'git' | 'workshop' | 'part
 export type Lane = 'main' | 'branch' | 'detour'
 export type VijayVisualId = 'why' | 'branches' | 'create' | 'commit' | 'merge'
 export type ArtId =
-  | 'ring' | 'kernel' | 'linus' | 'chaos' | 'snapshots' | 'born' | 'mukti' | 'audience' | 'collab'
-  | 'issueLabels' | 'prFlow' | 'forkFlow' | 'prDirection' | 'workflowSteps' | 'challengeSteps'
+  | 'ring' | 'kernel' | 'linus' | 'chaos' | 'snapshots' | 'born' | 'mukti' | 'audience'
+  | 'issueLabels' | 'forkFlow' | 'prMock' | 'workflowSteps' | 'challengeSteps'
   | 'githubSignup' | 'codespaces' | 'ready'
 
 export type View =
@@ -82,9 +82,17 @@ export interface Card {
   section: Section
   kicker: string
   title: string
+  /** Short quoted line shown under the title, above the description (pull-requests card). */
+  subheading?: string
   sentence: string
   bullets?: string[]
+  /** Numbered explanation points (01, 02, 03...) shown instead of plain bullets (pull-requests card). */
+  numberedPoints?: { number: string; title: string; text: string }[]
   note?: string
+  /** Bottom callout box with a heading and a few label/text lines (pull-requests card: "Remember"). */
+  remember?: { heading: string; lines: { label: string; text: string }[] }
+  /** Bottom callout box with a heading and a single paragraph (fork card: "Why fork?"). */
+  calloutBox?: { heading: string; text: string }
   /** Closing line shown as a highlighted chip (recap card). */
   final?: string
   tryIt?: string
@@ -113,12 +121,16 @@ export interface Card {
   noGraph?: string
   /** Terminal cards: show only the terminal (the commit graph is hidden). */
   hideGraph?: boolean
+  /** Terminal cards: overrides the directory shown in the terminal's title bar (defaults to the shared REPO constant). */
+  termRepo?: string
   /** Several copy chips under the bullets (one copy button per command). */
   chips?: string[]
   /** Small link line under the bullets. */
   aside?: { text: string; href: string }
   /** A button that opens the "Your details" window. */
   detailsButton?: boolean
+  /** Small boxed panel under the bullets: a heading plus a row of coloured label pills (oss-issues card). */
+  labelsPanel?: { heading: string; labels: { text: string; color: string }[] }
   /** Overrides applied for the chosen operating system. */
   os?: Record<OS, OSPart>
   /** Steps are the same on every system, so `steps` is also what the engine counts. */
