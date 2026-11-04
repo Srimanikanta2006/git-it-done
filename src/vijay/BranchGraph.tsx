@@ -1,14 +1,15 @@
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { TONE, type GLayout, type GScene } from './scenes'
 
-/* Same drawing language as components/Graph.tsx (rings, dots, pills, HEAD ring, springs),
-   but driven by a scripted scene so it can show several lanes and fast-forward. */
+/* The one Git-graph visual used by all five branching cards: rings, dots, curved branch lines,
+   colored pills, hashes under each commit. Scripted by scene + layout, so forward, back and
+   deep links always draw the same picture. */
 export function BranchGraph({ scene, layout, instant }: { scene: GScene; layout: GLayout; instant: boolean }) {
   const reduce = useReducedMotion()
   const snap = instant
   const { x0, dx, lanes, fs } = layout
-  const pillW = (t: string) => t.length * fs * 0.6 + 30
-  const pillH = fs * 1.36
+  const pillW = (t: string) => t.length * fs * 0.62 + 32
+  const pillH = fs * 1.4
   const at = (id: string) => {
     const k = scene.commits.find((m) => m.id === id)
     return k ? { x: x0 + k.col * dx, y: lanes[k.lane] } : null
@@ -26,7 +27,7 @@ export function BranchGraph({ scene, layout, instant }: { scene: GScene; layout:
     const d = from.y !== to.y
       ? `M${from.x} ${from.y} C${mx} ${from.y} ${mx} ${to.y} ${to.x} ${to.y}`
       : `M${from.x} ${from.y} L${to.x} ${to.y}`
-    return [{ key: k.parent + '>' + k.id, d, color: TONE[k.tone], delay: k.delay ?? 0 }]
+    return [{ key: k.parent + '>' + k.id, d, color: TONE[k.tone], delay: k.delay ?? 0, ghost: !!k.ghost }]
   })
 
   const seen: Record<string, number> = {}
@@ -34,10 +35,10 @@ export function BranchGraph({ scene, layout, instant }: { scene: GScene; layout:
     const pos = at(p.at)
     if (!pos) return []
     const k = (seen[p.at] = (seen[p.at] ?? -1) + 1)
-    return [{ ...p, x: pos.x, y: pos.y - fs * 1.9 - k * fs * 1.5, head: scene.head === p.name }]
+    const h = p.owner ? pillH * 1.74 : pillH
+    return [{ ...p, x: pos.x, y: pos.y - fs * 1.9 - k * fs * 1.5, w: pillW(p.name), h, head: scene.head === p.name }]
   })
   const headPill = pills.find((p) => p.head)
-  const head = headPill ? at(headPill.at) : null
   const hold = snap ? 0 : 0.25
 
   return (
@@ -45,8 +46,9 @@ export function BranchGraph({ scene, layout, instant }: { scene: GScene; layout:
       {edges.map((e) => (
         <motion.path
           key={e.key} d={e.d} fill="none" stroke={e.color} strokeWidth="5" strokeLinecap="round"
+          strokeDasharray={e.ghost ? '3 10' : undefined} opacity={e.ghost ? 0.6 : 1}
           initial={snap ? false : reduce ? { opacity: 0 } : { pathLength: 0 }}
-          animate={reduce ? { opacity: 1 } : { pathLength: 1 }}
+          animate={reduce ? { opacity: e.ghost ? 0.6 : 1 } : { pathLength: 1 }}
           transition={{ duration: 0.45, ease: 'easeOut', delay: snap ? 0 : e.delay }}
         />
       ))}
@@ -58,18 +60,35 @@ export function BranchGraph({ scene, layout, instant }: { scene: GScene; layout:
           <g key={k.id} transform={`translate(${p.x} ${p.y})`}>
             {scene.pulse === k.id && <circle r="22" fill="none" stroke={col} strokeWidth="3" className="pulse" />}
             <motion.g {...pop} transition={reduce ? { duration: 0.3 } : { ...spring, delay: snap ? 0 : hold + (k.delay ?? 0) }}>
-              <circle r="22" fill="none" stroke={col} strokeWidth="3" />
-              <circle r="14" fill={col} />
+              <circle r="22" fill="none" stroke={col} strokeWidth="3" strokeDasharray={k.ghost ? '5 5' : undefined} />
+              <circle r="14" fill={col} opacity={k.ghost ? 0.35 : 1} />
             </motion.g>
             <motion.text
-              y={fs * 2.3} textAnchor="middle" className="g-hash" fill="var(--term-text)" style={{ fontSize: fs }}
+              y={fs * 2.3} textAnchor="middle" className={'g-hash' + (k.ghost ? ' ghost' : '')}
+              fill={k.ghost ? 'var(--term-dim)' : 'var(--term-text)'} style={{ fontSize: k.ghost ? fs * 0.85 : fs, fontStyle: k.ghost ? 'italic' : 'normal' }}
               initial={snap ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: snap ? 0 : hold + 0.15 + (k.delay ?? 0) }}
             >
-              {k.id}
+              {k.ghost ? 'staged' : k.id}
             </motion.text>
           </g>
         )
       })}
+
+      <AnimatePresence>
+        {scene.fileTag && (
+          <motion.g
+            key="file-tag"
+            initial={snap ? false : { opacity: 0, y: -12 }}
+            animate={{ opacity: 1, x: x0 + scene.fileTag.col * dx, y: lanes[scene.fileTag.lane] - fs * 4.6 }}
+            exit={{ opacity: 0, transition: { duration: snap ? 0 : 0.25 } }}
+            transition={snap ? { duration: 0 } : { type: 'spring', stiffness: 260, damping: 24 }}
+          >
+            <rect x={-pillW(scene.fileTag.label) / 2} y={-pillH / 2} width={pillW(scene.fileTag.label)} height={pillH} rx={pillH / 2}
+              fill="none" stroke="var(--term-dim)" strokeWidth="2.5" strokeDasharray="5 5" />
+            <text textAnchor="middle" y={fs * 0.28} className="g-hash" fill="var(--term-dim)" style={{ fontSize: fs * 0.82 }}>{scene.fileTag.label}</text>
+          </motion.g>
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         {pills.map((p) => (
@@ -80,20 +99,26 @@ export function BranchGraph({ scene, layout, instant }: { scene: GScene; layout:
             exit={{ opacity: 0, transition: { duration: snap ? 0 : 0.4 } }}
             transition={snap ? { duration: 0 } : { type: 'spring', stiffness: 160, damping: 22, delay: hold + 0.2 + (p.at === scene.pulse ? 0.3 : 0) }}
           >
-            <rect x={-pillW(p.name) / 2} y={-pillH / 2} width={pillW(p.name)} height={pillH} rx={pillH / 2} fill={TONE[p.tone]}
+            <rect x={-p.w / 2} y={-p.h / 2} width={p.w} height={p.h} rx={p.owner ? pillH / 2 : p.h / 2} fill={TONE[p.tone]}
               stroke={p.head ? 'var(--head)' : 'none'} strokeWidth="3" />
-            <text textAnchor="middle" y={fs * 0.28} className="g-pill" style={{ fontSize: fs }}>{p.name}</text>
+            <text textAnchor="middle" y={p.owner ? -p.h * 0.5 + pillH * 0.62 : fs * 0.28} className="g-pill" style={{ fontSize: fs }}>{p.name}</text>
+            {p.owner && (
+              <text textAnchor="middle" y={p.h * 0.5 - pillH * 0.3} className="g-owner" style={{ fontSize: fs * 0.62 }}>{p.owner}</text>
+            )}
           </motion.g>
         ))}
       </AnimatePresence>
 
-      {head && (
+      {headPill && (
         <motion.g
-          initial={snap ? false : { x: head.x, y: head.y }}
-          animate={{ x: head.x, y: head.y }}
-          transition={snap ? { duration: 0 } : { type: 'spring', stiffness: 140, damping: 18, delay: hold + 0.1 }}
+          key="head-tag"
+          initial={snap ? false : { x: headPill.x, y: headPill.y, opacity: 0 }}
+          animate={{ x: headPill.x - headPill.w / 2 - fs * 2.3, y: headPill.y, opacity: 1 }}
+          transition={snap ? { duration: 0 } : { type: 'spring', stiffness: 220, damping: 22 }}
         >
-          <circle r="31" fill="none" stroke="var(--head)" strokeWidth="3" strokeDasharray="7 7" className="head-ring" />
+          <rect x={-fs * 2} y={-pillH / 2} width={fs * 4} height={pillH} rx={pillH / 2}
+            fill="var(--panel-2)" stroke="var(--head)" strokeWidth="2.5" strokeDasharray="6 5" />
+          <text textAnchor="middle" y={fs * 0.28} className="g-head-tag" style={{ fontSize: fs * 0.82 }}>HEAD</text>
         </motion.g>
       )}
     </svg>

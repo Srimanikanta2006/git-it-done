@@ -58,7 +58,7 @@ Designed for **1920×1080 TV displays**. Fonts are bundled so it works **fully o
 ## ✨ Features
 
 ### 🎴 Interactive Presentation Cards
-- **33+ cards** with smooth keyboard/click navigation
+- **34+ cards** with smooth keyboard/click navigation
 - **Stack-based transitions** — slide, drop, zoom, peel, split, converge, and launch animations powered by Framer Motion
 - **Deep linking** — every card has its own URL (`#/messy`, `#/push`, etc.); loading any URL rebuilds the correct state
 - **Rail navigation** — bottom progress bar; click any node to jump directly
@@ -214,12 +214,10 @@ git-it-done/
     │   └── Transitions.tsx            #   Card-to-card transition animations
     │
     ├── vijay/                         # Vijay's branching & merging section
-    │   ├── cards.ts                   #   Card data for branching + open source cards
-    │   ├── scenes.ts                  #   Scripted graph scenes
+    │   ├── cards.ts                   #   Card data for branching + open source cards (5 branching cards)
+    │   ├── scenes.ts                  #   Scripted graph scenes, shared by all 5 branching cards
     │   ├── VijayVisual.tsx            #   Visual dispatcher for branching visuals
-    │   ├── BranchGraph.tsx            #   Animated branch graph SVG
-    │   ├── BranchSwitcher.tsx         #   Branch switcher UI visualization
-    │   ├── ProblemsPanel.tsx          #   "Why branch?" problems panel
+    │   ├── BranchGraph.tsx            #   The one Git-graph SVG used by all 5 branching cards
     │   └── vijay.css                  #   Vijay section styles
     │
     └── contrib/                       # Scrollable contribution guide (separate app)
@@ -317,7 +315,7 @@ All presentation content lives in `src/cards.ts` and `src/vijay/cards.ts` as pla
 | `remote` | Remote diagram | Local ↔ GitHub relationship |
 | `compare` | Side-by-side | Comparison views |
 | `setup` | Setup instructions | Workshop setup card |
-| `vijay` | Branching visuals | Branch graph, switcher, merge |
+| `vijay` | Branching visuals | One shared Git-graph component across all 5 branching cards |
 | `fullshot` | Full screenshot | Large image cards |
 | `stub` | Placeholder | Cards pending content |
 | `challenge` | Challenge view | MUKTI Challenge card |

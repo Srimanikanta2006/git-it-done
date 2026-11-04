@@ -53,7 +53,7 @@ export interface StackScene {
 
 export type Section = 'hook' | 'stepback' | 'story' | 'git' | 'part2'
 export type Lane = 'main' | 'branch' | 'detour'
-export type VijayVisualId = 'problems' | 'branches' | 'switcher' | 'merge'
+export type VijayVisualId = 'why' | 'branches' | 'create' | 'commit' | 'merge'
 export type ArtId =
   | 'ring' | 'kernel' | 'linus' | 'chaos' | 'snapshots' | 'born' | 'mukti' | 'audience' | 'collab'
   | 'issueLabels' | 'prFlow' | 'forkFlow' | 'prDirection' | 'workflowSteps' | 'challengeSteps'

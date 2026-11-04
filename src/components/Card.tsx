@@ -67,7 +67,7 @@ export function Card({ cardIdx, done, applied, playing, instant, onStepDone, fra
       panel = <div className="panel center"><StubPanel /></div>
       break
     case 'vijay':
-      panel = <div className="panel vj-panel"><VijayVisual visual={card.visual ?? 'problems'} applied={applied} instant={instant} /></div>
+      panel = <div className="panel vj-panel"><VijayVisual visual={card.visual ?? 'why'} applied={applied} instant={instant} /></div>
       break
     case 'challenge':
       panel = (
@@ -80,7 +80,7 @@ export function Card({ cardIdx, done, applied, playing, instant, onStepDone, fra
       break
     default:
       panel = (
-        <div className={'panel split' + (card.strip ? ' has-strip' : '')}>
+        <div className={'panel split' + (card.strip ? ' has-strip' : '') + (card.visual ? ' vj-split' : '')}>
           <Terminal key={from} steps={card.steps.slice(from, done)} playing={playing} onDone={onStepDone} />
           <div className="graph-area">
             {card.strip && <FileStrip stage={fileStage(card, applied)} instant={instant} />}
@@ -110,9 +110,10 @@ export function Card({ cardIdx, done, applied, playing, instant, onStepDone, fra
 
   const weight = card.sentence.length + (card.bullets ?? []).join('').length + (card.note ?? '').length
   const dense = (card.view === 'story' && weight > 260) || card.view === 'vijay' || !!card.visual
+  const vjWide = card.view === 'vijay' || !!card.visual
 
   return (
-    <div className={'card' + (framed ? ' framed' : '') + (card.view === 'messy' ? ' wide' : '') + (dense ? ' dense' : '')}>
+    <div className={'card' + (framed ? ' framed' : '') + (card.view === 'messy' ? ' wide' : '') + (dense ? ' dense' : '') + (vjWide ? ' vj-wide' : '')}>
       <div className="card-left">
         <div className={'kicker' + (card.bigKicker ? ' big' : '')}>{card.kicker}</div>
         <h1>{card.title}</h1>

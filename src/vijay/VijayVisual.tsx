@@ -1,16 +1,16 @@
 import type { VijayVisualId } from '../engine/types'
-import { BranchSwitcher } from './BranchSwitcher'
 import { GraphView } from './BranchGraph'
-import { ProblemsPanel } from './ProblemsPanel'
-import { BRANCH_LAYOUT, BRANCH_SCENES, MERGE_LAYOUT, MERGE_SCENES } from './scenes'
+import { BRANCH_LAYOUT, BRANCH_SCENES, COMMIT_LAYOUT, COMMIT_SCENES, CREATE_LAYOUT, CREATE_SCENES, MERGE_LAYOUT, MERGE_SCENES, WHY_LAYOUT, WHY_SCENES } from './scenes'
 import './vijay.css'
 
-/** The right-hand visual of a branching card, drawn from the step number alone. */
+/** The right-hand visual of a branching card, drawn from the step number alone.
+    All five cards share one Git-graph component (BranchGraph) for full visual continuity. */
 export function VijayVisual({ visual, applied, instant }: { visual: VijayVisualId; applied: number; instant: boolean }) {
   switch (visual) {
-    case 'problems': return <ProblemsPanel applied={applied} instant={instant} />
+    case 'why': return <GraphView scene={WHY_SCENES[Math.min(applied, WHY_SCENES.length - 1)]} layout={WHY_LAYOUT} instant={instant} />
     case 'branches': return <GraphView scene={BRANCH_SCENES[Math.min(applied, BRANCH_SCENES.length - 1)]} layout={BRANCH_LAYOUT} instant={instant} />
+    case 'create': return <GraphView scene={CREATE_SCENES[Math.min(applied, CREATE_SCENES.length - 1)]} layout={CREATE_LAYOUT} instant={instant} />
+    case 'commit': return <GraphView scene={COMMIT_SCENES[Math.min(applied, COMMIT_SCENES.length - 1)]} layout={COMMIT_LAYOUT} instant={instant} />
     case 'merge': return <GraphView scene={MERGE_SCENES[Math.min(applied, MERGE_SCENES.length - 1)]} layout={MERGE_LAYOUT} instant={instant} />
-    case 'switcher': return <BranchSwitcher applied={applied} instant={instant} />
   }
 }

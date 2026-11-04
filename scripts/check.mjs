@@ -41,10 +41,11 @@ const CARDS = [
   ['github', 'Now we need GitHub.', 0],
   ['push', 'Send it to GitHub', 2],
   ['setup', 'Let\u2019s get Git on your laptop.', 3],
-  ['why-branch', 'One project. Multiple developers. How do we manage the work?', 2],
+  ['why-branch', 'Why do we need branches?', 4],
   ['branch-idea', 'Separate your work. Keep main stable.', 4],
   ['branch-create', 'Create a branch. Switch to it. Start working.', 4],
-  ['branch-merge', 'Feature complete? Bring it back into main.', 2],
+  ['branch-commit', 'Make a change. Save it as a commit.', 4],
+  ['branch-merge', 'Feature complete? Bring it back into main.', 5],
   ['oss-intro', 'Great software is built by people working together.', 0],
   ['oss-issues', 'Find something to fix', 0],
   ['oss-pull-requests', 'You can\u2019t push directly. So you propose instead.', 0],
@@ -58,7 +59,11 @@ const CARDS = [
 ]
 const LAST = 'oss-challenge'
 /* Terminal entries expected after each press on the branching terminal cards (press 3 on branch-create is a reset). */
-const TLINES = { 'branch-create': [0, 1, 2, 0, 1], 'branch-merge': [0, 1, 2] }
+const TLINES = {
+  'branch-create': [0, 1, 2, 0, 1],
+  'branch-commit': [0, 1, 2, 3, 4],
+  'branch-merge': [0, 1, 2, 3, 4, 5],
+}
 const STACK = ['open-source', 'mukti', 'personal-software', 'linux', 'linus', 'vc-problem', 'vc-idea', 'git-born', 'recap']
 const wait = (a, b) => (STACK.includes(a) || STACK.includes(b) ? 5500 : 1900)
 const idx = (id) => CARDS.findIndex((c) => c[0] === id)
@@ -217,7 +222,7 @@ async function layout(browser) {
   for (const [w, h] of SIZES) {
     const page = await browser.newPage()
     await page.setViewport({ width: w, height: h })
-    for (const id of ['open-source', 'mukti', 'personal-software', 'linux', 'linus', 'vc-idea', 'git-born', 'git-vs-github', 'linux-repo', 'github', 'push', 'setup', 'why-branch', 'branch-idea', 'branch-create', 'branch-merge', 'oss-intro', 'oss-issues', 'oss-pull-requests', 'oss-first-contrib', 'oss-fork', 'oss-clone', 'oss-commit-push', 'oss-create-pr', 'oss-workflow', 'oss-challenge']) {
+    for (const id of ['open-source', 'mukti', 'personal-software', 'linux', 'linus', 'vc-idea', 'git-born', 'git-vs-github', 'linux-repo', 'github', 'push', 'setup', 'why-branch', 'branch-idea', 'branch-create', 'branch-commit', 'branch-merge', 'oss-intro', 'oss-issues', 'oss-pull-requests', 'oss-first-contrib', 'oss-fork', 'oss-clone', 'oss-commit-push', 'oss-create-pr', 'oss-workflow', 'oss-challenge']) {
       await page.goto(URL + '#/' + id, { waitUntil: 'networkidle0' })
       await page.reload({ waitUntil: 'networkidle0' })
       await settle(page, 900)

@@ -1,5 +1,9 @@
 /* Scripted scenes for the branching cards. Pure data: a scene is a function of the step number only,
-   so forward, back, replay and deep links always draw the same picture. */
+   so forward, back, replay and deep links always draw the same picture.
+
+   All five branching cards share one drawing language (BranchGraph.tsx):
+   circular commit nodes, curved branch lines, colored branch pills, hashes under each commit,
+   and (from card 3 onward) a HEAD tag that sits next to whichever pill is current. */
 
 export type Tone = 'main' | 'login' | 'dash'
 export const TONE: Record<Tone, string> = {
@@ -8,24 +12,44 @@ export const TONE: Record<Tone, string> = {
   dash: 'var(--lane-remote)',
 }
 
-export interface GCommit { id: string; lane: number; col: number; tone: Tone; parent?: string; delay?: number }
-export interface GPill { name: string; at: string; tone: Tone }
+export interface GCommit {
+  id: string
+  lane: number
+  col: number
+  tone: Tone
+  parent?: string
+  delay?: number
+  /** Staged but not committed yet: drawn dashed/translucent, labelled "staged" instead of a hash. */
+  ghost?: boolean
+}
+export interface GPill {
+  name: string
+  at: string
+  tone: Tone
+  /** Card 1 only: a contextual name shown inside the pill under the branch name. */
+  owner?: string
+}
 export interface GScene {
   commits: GCommit[]
   /** Pills at the same commit stack upwards in array order. */
   pills: GPill[]
-  /** Name of the pill whose tip carries the HEAD ring. */
+  /** Name of the pill that HEAD points at: draws a HEAD tag beside that exact pill. */
   head?: string
   /** Commit that pulses (the shared commit). */
   pulse?: string
+  /** A file that exists in the working directory but isn't staged yet: floats above the given slot. */
+  fileTag?: { lane: number; col: number; label: string }
   caption: string
 }
 export interface GLayout { viewBox: string; lanes: number[]; x0: number; dx: number; fs: number }
 
-const c = (id: string, lane: number, col: number, tone: Tone, parent?: string, delay = 0): GCommit => ({ id, lane, col, tone, parent, delay })
+const c = (id: string, lane: number, col: number, tone: Tone, parent?: string, delay = 0): GCommit =>
+  ({ id, lane, col, tone, parent, delay })
 
-/* ---------- Card 2: main with three commits, two branches growing on their own ---------- */
-export const BRANCH_LAYOUT: GLayout = { viewBox: '0 0 800 440', lanes: [360, 220, 80], x0: 70, dx: 110, fs: 25 }
+/* ---------- Shared commit history for cards 1 and 2: main, then feature-login (Mohsin) and
+   feature-dashboard (Vijay) branch off the same commit and grow independently. ---------- */
+export const BRANCH_LAYOUT: GLayout = { viewBox: '0 0 800 440', lanes: [360, 220, 80], x0: 70, dx: 112, fs: 25 }
+export const WHY_LAYOUT = BRANCH_LAYOUT
 
 const MAIN = [c('a1b2c3d', 0, 0, 'main'), c('b2c3d4e', 0, 1, 'main', 'a1b2c3d'), c('c3d4e5f', 0, 2, 'main', 'b2c3d4e')]
 const L1 = c('4d5e6f7', 1, 3, 'login', 'c3d4e5f')
@@ -35,10 +59,43 @@ const L3 = c('6f7a8b9', 1, 5, 'login', '5e6f7a8', 0.35)
 const D2 = c('8b7c6d5', 2, 4, 'dash', '9a8b7c6', 0.2)
 const mainPill: GPill = { name: 'main', at: 'c3d4e5f', tone: 'main' }
 
+/* ---------- Card 1: Why branch? Same graph, with Mohsin and Vijay as contextual owners. ---------- */
+export const WHY_SCENES: GScene[] = [
+  { commits: [], pills: [], caption: 'Press Space to begin' },
+  { commits: MAIN, pills: [mainPill], caption: 'main: the stable, trusted version' },
+  {
+    commits: [...MAIN, L1],
+    pills: [mainPill, { name: 'feature-login', at: L1.id, tone: 'login', owner: 'Mohsin' }],
+    pulse: 'c3d4e5f', caption: 'Mohsin branches off \u2014 feature-login',
+  },
+  {
+    commits: [...MAIN, L1, D1],
+    pills: [
+      mainPill,
+      { name: 'feature-login', at: L1.id, tone: 'login', owner: 'Mohsin' },
+      { name: 'feature-dashboard', at: D1.id, tone: 'dash', owner: 'Vijay' },
+    ],
+    pulse: 'c3d4e5f', caption: 'Vijay branches off \u2014 same commit, same time',
+  },
+  {
+    commits: [...MAIN, L1, D1, L2, L3, D2],
+    pills: [
+      mainPill,
+      { name: 'feature-login', at: L3.id, tone: 'login', owner: 'Mohsin' },
+      { name: 'feature-dashboard', at: D2.id, tone: 'dash', owner: 'Vijay' },
+    ],
+    caption: 'Each branch grows on its own. main has not moved.',
+  },
+]
+
+/* ---------- Card 2: What is branching? Same history, no owners \u2014 a technical, reusable definition. ---------- */
 export const BRANCH_SCENES: GScene[] = [
   { commits: [], pills: [], caption: 'Press Space to build the graph' },
   { commits: MAIN, pills: [mainPill], caption: 'main: the stable line of commits' },
-  { commits: [...MAIN, L1], pills: [mainPill, { name: 'feature-login', at: L1.id, tone: 'login' }], pulse: 'c3d4e5f', caption: 'feature-login starts from a shared commit' },
+  {
+    commits: [...MAIN, L1], pills: [mainPill, { name: 'feature-login', at: L1.id, tone: 'login' }],
+    pulse: 'c3d4e5f', caption: 'A branch is a pointer \u2014 feature-login starts from a shared commit',
+  },
   {
     commits: [...MAIN, L1, D1],
     pills: [mainPill, { name: 'feature-login', at: L1.id, tone: 'login' }, { name: 'feature-dashboard', at: D1.id, tone: 'dash' }],
@@ -51,24 +108,59 @@ export const BRANCH_SCENES: GScene[] = [
   },
 ]
 
-/* ---------- Card 4: the live demo, a fast-forward merge ---------- */
+/* ---------- Card 3: create & switch. One shared commit; the HEAD tag is the whole point. ---------- */
+export const CREATE_LAYOUT: GLayout = { viewBox: '0 40 800 260', lanes: [170], x0: 400, dx: 0, fs: 30 }
+const S0 = c('c3d4e5f', 0, 0, 'main')
+const mainOnly: GPill = { name: 'main', at: S0.id, tone: 'main' }
+const loginHere: GPill = { name: 'feature-login', at: S0.id, tone: 'login' }
+
+export const CREATE_SCENES: GScene[] = [
+  { commits: [S0], pills: [mainOnly], head: 'main', caption: 'You are on main.' },
+  { commits: [S0], pills: [mainOnly, loginHere], head: 'main', caption: 'git branch feature-login \u2014 created, but HEAD is still on main.' },
+  { commits: [S0], pills: [mainOnly, loginHere], head: 'feature-login', caption: 'git checkout feature-login \u2014 HEAD moves. Same commit, nothing else changes.' },
+  { commits: [S0], pills: [mainOnly], head: 'main', caption: 'Fresh start \u2014 same goal, one command.' },
+  { commits: [S0], pills: [mainOnly, loginHere], head: 'feature-login', caption: 'git checkout -b feature-login \u2014 created AND switched, in one step.' },
+]
+
+/* ---------- Card 4: making changes on a branch. echo -> add -> commit, staged as a ghost first. ---------- */
+export const COMMIT_LAYOUT: GLayout = { viewBox: '0 20 800 300', lanes: [210, 90], x0: 190, dx: 380, fs: 27 }
+const K0 = c('c3d4e5f', 0, 0, 'main')
+const K1 = c('b7e4f91', 1, 1, 'login', 'c3d4e5f')
+const kGhost: GCommit = { id: 'g-staged', lane: 1, col: 1, tone: 'login', parent: 'c3d4e5f', ghost: true }
+
+export const COMMIT_SCENES: GScene[] = [
+  {
+    commits: [K0], pills: [{ name: 'main', at: K0.id, tone: 'main' }, { name: 'feature-login', at: K0.id, tone: 'login' }],
+    head: 'main', caption: 'main and feature-login share the same commit.',
+  },
+  {
+    commits: [K0], pills: [{ name: 'main', at: K0.id, tone: 'main' }, { name: 'feature-login', at: K0.id, tone: 'login' }],
+    head: 'feature-login', caption: 'git checkout feature-login \u2014 new commits now land here.',
+  },
+  {
+    commits: [K0], pills: [{ name: 'main', at: K0.id, tone: 'main' }, { name: 'feature-login', at: K0.id, tone: 'login' }],
+    head: 'feature-login', fileTag: { lane: 1, col: 1, label: 'notes.txt' },
+    caption: 'echo ... > notes.txt \u2014 exists in the working directory, not yet tracked.',
+  },
+  {
+    commits: [K0, kGhost], pills: [{ name: 'main', at: K0.id, tone: 'main' }, { name: 'feature-login', at: K0.id, tone: 'login' }],
+    head: 'feature-login', caption: 'git add notes.txt \u2014 staged, ready to be committed.',
+  },
+  {
+    commits: [K0, K1], pills: [{ name: 'main', at: K0.id, tone: 'main' }, { name: 'feature-login', at: K1.id, tone: 'login' }],
+    head: 'feature-login', pulse: K1.id,
+    caption: 'git commit \u2014 feature-login moved forward. main has not.',
+  },
+]
+
+/* ---------- Card 5: merging. Continues the exact two commits from card 4, fast-forward merge. ---------- */
 export const MERGE_LAYOUT: GLayout = { viewBox: '0 80 800 190', lanes: [195], x0: 170, dx: 460, fs: 28 }
-const A = c('a1b2c3d', 0, 0, 'main')
-const B = c('e5f6a7b', 0, 1, 'login', 'a1b2c3d')
+const A = c('c3d4e5f', 0, 0, 'main')
+const B = c('b7e4f91', 0, 1, 'login', 'c3d4e5f')
 const feature: GPill = { name: 'feature-login', at: B.id, tone: 'login' }
 
 export const MERGE_SCENES: GScene[] = [
-  { commits: [A, B], pills: [feature, { name: 'main', at: A.id, tone: 'main' }], head: 'feature-login', caption: 'You are on feature-login. main is one commit behind.' },
-  { commits: [A, B], pills: [feature, { name: 'main', at: A.id, tone: 'main' }], head: 'main', caption: 'Now on main. It does not have the feature yet.' },
-  { commits: [A, B], pills: [feature, { name: 'main', at: B.id, tone: 'main' }], head: 'main', pulse: B.id, caption: 'Merged feature-login INTO main. main moved forward.' },
-]
-
-/* ---------- Card 3: the branch selector ---------- */
-export interface SwitchScene { branches: string[]; head: string; caption: string; badge?: string }
-export const SWITCH_SCENES: SwitchScene[] = [
-  { branches: ['main'], head: 'main', caption: 'You are on main.' },
-  { branches: ['main', 'feature-login'], head: 'main', caption: 'Created, but you are still on main.' },
-  { branches: ['main', 'feature-login'], head: 'feature-login', caption: 'Switched. New commits now go to feature-login.' },
-  { branches: ['main'], head: 'main', caption: 'Fresh start: same goal, one command.' },
-  { branches: ['main', 'feature-login'], head: 'feature-login', caption: 'Created and switched in one step.', badge: 'create + switch' },
+  { commits: [A, B], pills: [feature, { name: 'main', at: A.id, tone: 'main' }], head: 'feature-login', caption: 'On feature-login. main is one commit behind.' },
+  { commits: [A, B], pills: [feature, { name: 'main', at: A.id, tone: 'main' }], head: 'main', caption: 'git checkout main \u2014 it does not have the feature yet.' },
+  { commits: [A, B], pills: [feature, { name: 'main', at: B.id, tone: 'main' }], head: 'main', pulse: B.id, caption: 'git merge feature-login \u2014 fast-forward. main moved forward.' },
 ]

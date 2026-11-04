@@ -1,22 +1,31 @@
-/* Branching section only. Tokens from theme.css, sizes from --u. */
+/* Branching section only. Tokens from theme.css, sizes from --u.
+   All five branching cards share one Git-graph visual language (BranchGraph.tsx), so the
+   diagram is the dominant element: text is kept short and the graph gets the most room. */
+
+/* Give the branching cards' right-hand panel more width than the default 42/58 split,
+   since the Git graph (not the text) carries most of the teaching here. Scoped to
+   card.view === 'vijay' / card.visual, so Mohsin's cards and other sections are untouched. */
+.card.vj-wide { grid-template-columns: 34fr 66fr; }
+
 .panel.vj-panel { display: flex; flex-direction: column; justify-content: center; gap: calc(var(--u) * 1); padding: calc(var(--u) * 1.6); }
 .vj-scene { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; justify-content: center; }
 .vj-caption { text-align: center; font-size: calc(var(--u) * 2.1); font-weight: 700; color: var(--lane-main); min-height: calc(var(--u) * 3); animation: fadein 0.4s ease-out both; }
-.vj-caption.two { display: grid; gap: calc(var(--u) * 0.2); min-height: calc(var(--u) * 6); align-content: start; }
-.vj-caption.two b { font-size: calc(var(--u) * 1.8); color: var(--lane-feature); letter-spacing: 0.02em; }
-.vj-caption.two span { font-size: calc(var(--u) * 2.1); color: var(--lane-main); }
-.pulse-soft { animation: vj-soft 1.6s ease-in-out infinite; }
-@keyframes vj-soft { 50% { opacity: 0.45; } }
 
-/* branch selector (card 3) */
-.vj-switch { display: grid; gap: calc(var(--u) * 0.6); align-content: center; padding: calc(var(--u) * 0.4) calc(var(--u) * 1); min-height: calc(var(--u) * 8); }
-.vj-row { display: flex; align-items: center; gap: calc(var(--u) * 1); }
-.vj-slot { flex: none; width: calc(var(--u) * 7); display: flex; justify-content: flex-end; }
-.vj-head { font-family: var(--font-code); font-weight: 700; font-size: calc(var(--u) * 1.5); color: var(--head); border: 3px dashed var(--head); border-radius: 99px; padding: 0 calc(var(--u) * 0.8); }
-.vj-pill { font-family: var(--font-code); font-weight: 700; font-size: calc(var(--u) * 2); color: var(--panel); border-radius: 99px; padding: calc(var(--u) * 0.1) calc(var(--u) * 1.4); box-shadow: 0 0 0 0 var(--head); }
-.vj-pill.on { box-shadow: 0 0 0 3px var(--head); }
-.vj-badge { background: var(--lane-main); color: var(--panel); font-weight: 700; font-size: calc(var(--u) * 1.5); border-radius: 99px; padding: calc(var(--u) * 0.15) calc(var(--u) * 1); }
+/* Terminal cards (create / commit / merge): terminal on the left, the Git graph on the right,
+   side by side, so the graph is never squeezed into a short strip. */
+.panel.split.vj-split { display: grid; grid-template-columns: minmax(0, 0.78fr) minmax(0, 1fr); grid-template-rows: none; gap: calc(var(--u) * 1.2); align-items: stretch; }
+.panel.split.vj-split .graph-area { border-top: none; padding-top: 0; justify-content: center; }
+.panel.split.vj-split .graph-wrap { min-height: calc(var(--u) * 20); }
+
+.g-owner { font-family: var(--font-code); font-weight: 600; fill: rgba(20, 24, 16, 0.6); letter-spacing: 0.01em; }
+.g-head-tag { font-family: var(--font-code); font-weight: 700; fill: var(--head); letter-spacing: 0.04em; }
+.g-hash.ghost { font-family: var(--font-code); }
 
 @media (prefers-reduced-motion: reduce) {
-  .pulse-soft, .vj-caption { animation: none; }
+  .vj-caption { animation: none; }
+}
+
+@media (max-width: 899px) {
+  .card.vj-wide { grid-template-columns: 1fr; }
+  .panel.split.vj-split { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) minmax(0, 1.2fr); }
 }
