@@ -25,6 +25,32 @@ export interface CardProps {
 /** Keeps a command option such as --version in one piece when a line wraps. */
 const nb = (s: string) => s.replace(/--(?=\w)/g, '--\u2060')
 
+function formatText(s: string) {
+  const text = nb(s)
+  const regex = /\[([^\]]+)\]\(([^)]+)\)/g
+  if (!regex.test(text)) return text
+  regex.lastIndex = 0
+  const nodes: (string | JSX.Element)[] = []
+  let lastIndex = 0
+  let match: RegExpExecArray | null
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      nodes.push(text.slice(lastIndex, match.index))
+    }
+    const [, label, url] = match
+    nodes.push(
+      <a key={match.index} href={url} target="_blank" rel="noreferrer" className="inline-link" onClick={(e) => e.stopPropagation()}>
+        {label}
+      </a>
+    )
+    lastIndex = regex.lastIndex
+  }
+  if (lastIndex < text.length) {
+    nodes.push(text.slice(lastIndex))
+  }
+  return nodes
+}
+
 export function Card({ cardIdx, done, applied, playing, instant, onStepDone, framed = false }: CardProps) {
   const { os } = useOS()
   const { filled } = useUserDetails()
@@ -137,11 +163,11 @@ export function Card({ cardIdx, done, applied, playing, instant, onStepDone, fra
       <div className="card-left">
         <div className={'kicker' + (card.bigKicker ? ' big' : '')}>{card.kicker}</div>
         <h1>{card.title}</h1>
-        {card.subheading && <p className="subheading">{nb(card.subheading)}</p>}
-        <p className="sentence">{nb(card.sentence)}</p>
+        {card.subheading && <p className="subheading">{formatText(card.subheading)}</p>}
+        <p className="sentence">{formatText(card.sentence)}</p>
         {card.bullets && (
           <ul className="bullets">
-            {card.bullets.map((b) => <li key={b}>{nb(b)}</li>)}
+            {card.bullets.map((b, i) => <li key={i}>{formatText(b)}</li>)}
           </ul>
         )}
         {card.numberedPoints && (
@@ -151,13 +177,13 @@ export function Card({ cardIdx, done, applied, playing, instant, onStepDone, fra
                 <span className="numbered-badge">{p.number}</span>
                 <div className="numbered-point-body">
                   <div className="numbered-point-title">{p.title}</div>
-                  <div className="numbered-point-text">{nb(p.text)}</div>
+                  <div className="numbered-point-text">{formatText(p.text)}</div>
                 </div>
               </div>
             ))}
           </div>
         )}
-        {card.note && <div className="note-chip">{nb(card.note)}</div>}
+        {card.note && <div className="note-chip">{formatText(card.note)}</div>}
         {card.remember && (
           <div className="remember-box">
             <div className="remember-heading">{card.remember.heading}</div>

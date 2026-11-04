@@ -470,6 +470,29 @@ function ChallengeStepsArt() {
   )
 }
 
+function ResourcesArt() {
+  const items = [
+    { title: 'Learn Git Branching', tag: 'Interactive Game', url: 'learngitbranching.js.org', color: 'var(--lane-feature)', desc: 'Visual tree sandbox for branches, merges & rebasing' },
+    { title: 'Oh Shit, Git!?!', tag: 'Emergency Guide', url: 'ohshitgit.com', color: 'var(--accent)', desc: 'Plain-English recipes to get out of any Git mess' },
+    { title: 'Good First Issue', tag: 'First PRs', url: 'goodfirstissue.dev', color: 'var(--lane-main)', desc: 'Curated beginner issues across top GitHub repositories' },
+    { title: 'Pro Git Book', tag: 'Free Official Book', url: 'git-scm.com/book', color: 'var(--lane-remote)', desc: 'The comprehensive official handbook, free online' },
+  ]
+  return (
+    <div className="res-grid" role="region" aria-label="Curated resources to continue your Git journey">
+      {items.map((item) => (
+        <a key={item.title} href={`https://${item.url}`} target="_blank" rel="noreferrer" className="res-card">
+          <div className="res-card-top">
+            <span className="res-tag" style={{ color: item.color, borderColor: item.color }}>{item.tag}</span>
+            <span className="res-url">{item.url} &nearr;</span>
+          </div>
+          <div className="res-title">{item.title}</div>
+          <div className="res-desc">{item.desc}</div>
+        </a>
+      ))}
+    </div>
+  )
+}
+
 export function StoryArt({ art }: { art: ArtId }) {
   switch (art) {
     case 'ring': return <RingArt />
@@ -487,6 +510,7 @@ export function StoryArt({ art }: { art: ArtId }) {
     case 'githubSignup': return <SignupArt />
     case 'codespaces': return <CodespacesArt />
     case 'ready': return <ReadyArt />
+    case 'resourcesArt': return <ResourcesArt />
     case 'mukti': return null
   }
 }
@@ -663,7 +687,7 @@ export function StubPanel() {
   return (
     <div className="stub">
       <div className="stub-title">Content coming</div>
-      <div className="stub-sub">Part 2 (Vijay)</div>
+      <div className="stub-sub">Part 2 &middot; Branching &amp; Merging</div>
     </div>
   )
 }

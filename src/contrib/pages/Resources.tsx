@@ -2,6 +2,14 @@ import { CONFIG, hasConfig } from '../config'
 import { Callout, Crumb, NextUp, PageHeader, Pending, Section } from '../ui'
 
 const USEFUL_LINKS = [
+  ['Learn Git Branching (Interactive Sandbox Game)', 'https://learngitbranching.js.org/'],
+  ['Oh Shit, Git!?! (Fix Common Git Messes in Plain English)', 'https://ohshitgit.com/'],
+  ['Good First Issue (Curated Beginner Open Source Tasks)', 'https://goodfirstissue.dev/'],
+  ['First Contributions (Hands-on Practice PRs)', 'https://firstcontributions.github.io/'],
+  ['Pro Git Book (Free Official Book)', 'https://git-scm.com/book/en/v2'],
+  ['GitHub Skills (Interactive In-Repo Courses)', 'https://skills.github.com/'],
+  ['Mukti Community GitHub Organization', 'https://github.com/MuktiCommunity'],
+  ['Mukti Community Telegram Channel', 'https://t.me/+wFGdHiypdQhkZWU9'],
   ['GitHub: Getting started', 'https://docs.github.com/en/get-started'],
   ['GitHub: About issues', 'https://docs.github.com/en/issues/tracking-your-work-with-issues/about-issues'],
   ['GitHub: About pull requests', 'https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests'],

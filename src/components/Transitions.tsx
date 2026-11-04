@@ -214,8 +214,13 @@ function StackLayer({ id, index, depth, frame, fi, snap, soft, moves, reduce, u,
 
   return (
     <motion.div
-      className="slayer"
-      style={{ zIndex: index + 1, transformOrigin: '50% 0%', ['--ts' as string]: 1 / depthScale(depth) }}
+      className={`slayer ${depth === 0 ? 'active' : ''}`}
+      style={{
+        zIndex: index + 1,
+        transformOrigin: '50% 0%',
+        ['--ts' as string]: 1 / depthScale(depth),
+        pointerEvents: depth === 0 ? 'auto' : 'none',
+      }}
       initial={snap ? false : reduce ? { opacity: 0 } : from}
       animate={{ ...pose, transition }}
       exit={exit}
@@ -328,7 +333,7 @@ export function Stage({ trans, cur, finishTick, onBusy, renderPrev, renderStack,
     )
   }
 
-  const eff: Trans = finished || isStackKind(trans.kind) ? { ...trans, kind: 'none' } : trans
+  const eff: Trans = !running || finished || isStackKind(trans.kind) ? { ...trans, kind: 'none' } : trans
   const showPrev = eff.from && running && !finished && eff.kind !== 'none'
   return (
     <div className="stage">

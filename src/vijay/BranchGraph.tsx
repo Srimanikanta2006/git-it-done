@@ -91,22 +91,25 @@ export function BranchGraph({ scene, layout, instant }: { scene: GScene; layout:
       </AnimatePresence>
 
       <AnimatePresence>
-        {pills.map((p) => (
-          <motion.g
-            key={p.name}
-            initial={snap ? false : { x: p.x, y: p.y, opacity: 0 }}
-            animate={{ x: p.x, y: p.y, opacity: 1 }}
-            exit={{ opacity: 0, transition: { duration: snap ? 0 : 0.4 } }}
-            transition={snap ? { duration: 0 } : { type: 'spring', stiffness: 160, damping: 22, delay: hold + 0.2 + (p.at === scene.pulse ? 0.3 : 0) }}
-          >
-            <rect x={-p.w / 2} y={-p.h / 2} width={p.w} height={p.h} rx={p.owner ? pillH / 2 : p.h / 2} fill={TONE[p.tone]}
-              stroke={p.head ? 'var(--head)' : 'none'} strokeWidth="3" />
-            <text textAnchor="middle" y={p.owner ? -p.h * 0.5 + pillH * 0.62 : fs * 0.28} className="g-pill" style={{ fontSize: fs }}>{p.name}</text>
-            {p.owner && (
-              <text textAnchor="middle" y={p.h * 0.5 - pillH * 0.3} className="g-owner" style={{ fontSize: fs * 0.62 }}>{p.owner}</text>
-            )}
-          </motion.g>
-        ))}
+        {pills.map((p) => {
+          const commitDelay = scene.commits.find((c) => c.id === p.at)?.delay ?? 0
+          return (
+            <motion.g
+              key={p.name}
+              initial={snap ? false : { x: p.x, y: p.y, opacity: 0 }}
+              animate={{ x: p.x, y: p.y, opacity: 1 }}
+              exit={{ opacity: 0, transition: { duration: snap ? 0 : 0.4 } }}
+              transition={snap ? { duration: 0 } : { type: 'spring', stiffness: 160, damping: 22, delay: hold + 0.15 + commitDelay + (p.at === scene.pulse ? 0.3 : 0) }}
+            >
+              <rect x={-p.w / 2} y={-p.h / 2} width={p.w} height={p.h} rx={p.owner ? pillH / 2 : p.h / 2} fill={TONE[p.tone]}
+                stroke={p.head ? 'var(--head)' : 'none'} strokeWidth="3" />
+              <text textAnchor="middle" y={p.owner ? -p.h * 0.5 + pillH * 0.62 : fs * 0.28} className="g-pill" style={{ fontSize: fs }}>{p.name}</text>
+              {p.owner && (
+                <text textAnchor="middle" y={p.h * 0.5 - pillH * 0.3} className="g-owner" style={{ fontSize: fs * 0.62 }}>{p.owner}</text>
+              )}
+            </motion.g>
+          )
+        })}
       </AnimatePresence>
 
       {headPill && (

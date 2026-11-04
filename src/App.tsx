@@ -163,6 +163,24 @@ export default function App() {
     return () => window.removeEventListener('click', onClick)
   }, [])
 
+  // prevent scroll retention across zoom in/out and card changes
+  useEffect(() => {
+    const resetScroll = () => {
+      window.scrollTo(0, 0)
+      if (document.scrollingElement) {
+        document.scrollingElement.scrollTop = 0
+        document.scrollingElement.scrollLeft = 0
+      }
+      document.querySelectorAll('.stage, .layer, .slayer, .card').forEach((el) => {
+        el.scrollTop = 0
+        el.scrollLeft = 0
+      })
+    }
+    resetScroll()
+    window.addEventListener('resize', resetScroll)
+    return () => window.removeEventListener('resize', resetScroll)
+  }, [s.card])
+
   // hash <-> state
   useEffect(() => {
     const want = '#/' + cards[s.card].id
@@ -188,6 +206,17 @@ export default function App() {
   return (
     <OSContext.Provider value={ctx}>
       <div className="app">
+        <header className="space-guide" aria-label="Navigation hint">
+          <span className="space-guide-text">
+            {atEnd ? (
+              <span>You reached the end &middot; Check the guide or press <kbd>&larr;</kbd> to review</span>
+            ) : card.steps.length > 0 && s.done < card.steps.length ? (
+              <span>Press <kbd>SPACE</kbd> or <kbd>&rarr;</kbd> to see next change ({s.done + 1}/{card.steps.length})</span>
+            ) : (
+              <span>Press <kbd>SPACE</kbd> or <kbd>&rarr;</kbd> to continue</span>
+            )}
+          </span>
+        </header>
         <Stage
           trans={s.trans}
           cur={s.card}

@@ -46,45 +46,45 @@ export interface GLayout { viewBox: string; lanes: number[]; x0: number; dx: num
 const c = (id: string, lane: number, col: number, tone: Tone, parent?: string, delay = 0): GCommit =>
   ({ id, lane, col, tone, parent, delay })
 
-/* ---------- Shared commit history for cards 1 and 2: main, then feature-login (Mohsin) and
-   feature-dashboard (Vijay) branch off the same commit and grow independently. ---------- */
+/* ---------- Shared commit history for cards 1 and 2: main, then feature-login and
+   feature-dashboard branch off the same commit and grow independently. ---------- */
 export const BRANCH_LAYOUT: GLayout = { viewBox: '0 0 800 440', lanes: [360, 220, 80], x0: 70, dx: 112, fs: 25 }
 export const WHY_LAYOUT = BRANCH_LAYOUT
 
 const MAIN = [c('a1b2c3d', 0, 0, 'main'), c('b2c3d4e', 0, 1, 'main', 'a1b2c3d'), c('c3d4e5f', 0, 2, 'main', 'b2c3d4e')]
 const L1 = c('4d5e6f7', 1, 3, 'login', 'c3d4e5f')
 const D1 = c('9a8b7c6', 2, 3, 'dash', 'c3d4e5f')
-const L2 = c('5e6f7a8', 1, 4, 'login', '4d5e6f7')
-const L3 = c('6f7a8b9', 1, 5, 'login', '5e6f7a8', 0.35)
-const D2 = c('8b7c6d5', 2, 4, 'dash', '9a8b7c6', 0.2)
+const L2 = c('5e6f7a8', 1, 4, 'login', '4d5e6f7', 0.15)
+const D2 = c('8b7c6d5', 2, 4, 'dash', '9a8b7c6', 0.95)
+const L3 = c('6f7a8b9', 1, 5, 'login', '5e6f7a8', 1.75)
 const mainPill: GPill = { name: 'main', at: 'c3d4e5f', tone: 'main' }
 
-/* ---------- Card 1: Why branch? Same graph, with Mohsin and Vijay as contextual owners. ---------- */
+/* ---------- Card 1: Why branch? Same graph, with You and Teammate as contextual owners. ---------- */
 export const WHY_SCENES: GScene[] = [
   { commits: [], pills: [], caption: 'Press Space to begin' },
   { commits: MAIN, pills: [mainPill], caption: 'main: the stable, trusted version' },
   {
     commits: [...MAIN, L1],
-    pills: [mainPill, { name: 'feature-login', at: L1.id, tone: 'login', owner: 'Mohsin' }],
-    pulse: 'c3d4e5f', caption: 'Mohsin branches off \u2014 feature-login',
+    pills: [mainPill, { name: 'feature-login', at: L1.id, tone: 'login', owner: 'You' }],
+    pulse: 'c3d4e5f', caption: 'You branch off \u2014 feature-login',
   },
   {
     commits: [...MAIN, L1, D1],
     pills: [
       mainPill,
-      { name: 'feature-login', at: L1.id, tone: 'login', owner: 'Mohsin' },
-      { name: 'feature-dashboard', at: D1.id, tone: 'dash', owner: 'Vijay' },
+      { name: 'feature-login', at: L1.id, tone: 'login', owner: 'You' },
+      { name: 'feature-dashboard', at: D1.id, tone: 'dash', owner: 'Teammate' },
     ],
-    pulse: 'c3d4e5f', caption: 'Vijay branches off \u2014 same commit, same time',
+    pulse: 'c3d4e5f', caption: 'Teammate branches off \u2014 same commit, same time',
   },
   {
-    commits: [...MAIN, L1, D1, L2, L3, D2],
+    commits: [...MAIN, L1, D1, L2, D2, L3],
     pills: [
       mainPill,
-      { name: 'feature-login', at: L3.id, tone: 'login', owner: 'Mohsin' },
-      { name: 'feature-dashboard', at: D2.id, tone: 'dash', owner: 'Vijay' },
+      { name: 'feature-login', at: L3.id, tone: 'login', owner: 'You' },
+      { name: 'feature-dashboard', at: D2.id, tone: 'dash', owner: 'Teammate' },
     ],
-    caption: 'Each branch grows on its own. main has not moved.',
+    caption: 'Each branch grows 1 by 1 on its own. main has not moved.',
   },
 ]
 
@@ -102,9 +102,9 @@ export const BRANCH_SCENES: GScene[] = [
     pulse: 'c3d4e5f', caption: 'feature-dashboard starts from the same commit',
   },
   {
-    commits: [...MAIN, L1, D1, L2, L3, D2],
+    commits: [...MAIN, L1, D1, L2, D2, L3],
     pills: [mainPill, { name: 'feature-login', at: L3.id, tone: 'login' }, { name: 'feature-dashboard', at: D2.id, tone: 'dash' }],
-    caption: 'Each branch grows on its own. main has not moved.',
+    caption: 'Each branch grows 1 by 1 on its own. main has not moved.',
   },
 ]
 

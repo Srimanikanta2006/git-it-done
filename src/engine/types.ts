@@ -59,7 +59,7 @@ export type VijayVisualId =
 export type ArtId =
   | 'ring' | 'kernel' | 'linus' | 'chaos' | 'snapshots' | 'born' | 'mukti' | 'audience'
   | 'issueLabels' | 'forkFlow' | 'prMock' | 'workflowSteps' | 'challengeSteps'
-  | 'githubSignup' | 'codespaces' | 'ready'
+  | 'githubSignup' | 'codespaces' | 'ready' | 'resourcesArt'
 
 export type View =
   | 'messy' | 'hero' | 'story' | 'compare' | 'areas' | 'remote' | 'setup' | 'terminal' | 'stub' | 'challenge' | 'fullshot' | 'vijay' | 'oschoice'

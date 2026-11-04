@@ -1,16 +1,17 @@
 import { useEffect, useRef, useState } from 'react'
-import { motion, useReducedMotion } from 'framer-motion'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import type { Card } from '../engine/types'
 
 type SegKind = 'main' | 'detour' | 'branch'
 interface Seg { key: string; d: string; kind: SegKind; to: number }
 
-const labelOf = (c: Card) => (c.section === 'part2' && c.id !== 'challenge' ? `Part 2 (Vijay): ${c.rail}` : c.rail)
+const labelOf = (c: Card) => (c.section === 'part2' && c.id !== 'challenge' ? `Part 2: ${c.rail}` : c.rail)
 
 export function Rail({ cards, cur, onJump, delay }: { cards: Card[]; cur: number; onJump: (i: number) => void; delay: number }) {
   const ref = useRef<HTMLDivElement>(null)
   const reduce = useReducedMotion()
   const [size, setSize] = useState({ w: 1000, h: 120, fs: 14 })
+  const [hovered, setHovered] = useState<number | null>(null)
 
   useEffect(() => {
     const el = ref.current
@@ -103,6 +104,10 @@ export function Rail({ cards, cur, onJump, delay }: { cards: Card[]; cur: number
               key={c.id} transform={`translate(${x} ${y})`} role="button" tabIndex={0}
               aria-label={`Go to ${c.title}`} aria-current={i === cur ? 'step' : undefined}
               onClick={() => onJump(i)}
+              onMouseEnter={() => setHovered(i)}
+              onMouseLeave={() => setHovered(null)}
+              onFocus={() => setHovered(i)}
+              onBlur={() => setHovered(null)}
               onKeyDown={(e) => { if (e.key === 'Enter') onJump(i) }}
               style={{ cursor: 'pointer', outline: 'none' }}
             >
@@ -127,6 +132,51 @@ export function Rail({ cards, cur, onJump, delay }: { cards: Card[]; cur: number
           <text x={lx} y={ly + fs} textAnchor="middle" fontSize={fs} className="rail-label">{label}</text>
         </motion.g>
       </svg>
+
+      <AnimatePresence>
+        {hovered !== null && cards[hovered] && (() => {
+          const dotX = xs(hovered)
+          const cardW = Math.min(290, w * 0.86)
+          const minCenter = cardW / 2 + 12
+          const maxCenter = Math.max(minCenter, w - cardW / 2 - 12)
+          const cardLeft = Math.min(Math.max(dotX, minCenter), maxCenter)
+          const rawArrowLeft = dotX - (cardLeft - cardW / 2)
+          const arrowLeft = Math.min(Math.max(rawArrowLeft, 18), cardW - 18)
+
+          return (
+            <motion.div
+              className="rail-hover-card"
+              style={{
+                left: `${cardLeft}px`,
+                bottom: `${h - yOf(hovered) + 16}px`,
+                ['--arrow-left' as string]: `${arrowLeft}px`,
+              }}
+              initial={{ x: '-50%', opacity: 0, y: 6, scale: 0.96 }}
+              animate={{ x: '-50%', opacity: 1, y: 0, scale: 1 }}
+              exit={{ x: '-50%', opacity: 0, y: 4, scale: 0.98 }}
+              transition={{ duration: 0.15, ease: 'easeOut' }}
+            >
+              <div className="rail-hover-head">
+                <span className="rail-hover-kicker">{cards[hovered].kicker || cards[hovered].rail}</span>
+                {cards[hovered].steps.length > 0 ? (
+                  <span className="rail-hover-badge">{cards[hovered].steps.length} {cards[hovered].steps.length === 1 ? 'step' : 'steps'}</span>
+                ) : (
+                  <span className="rail-hover-badge concept">concept</span>
+                )}
+              </div>
+              <div className="rail-hover-title">{cards[hovered].title}</div>
+              {cards[hovered].sentence && (
+                <div className="rail-hover-desc">{cards[hovered].sentence}</div>
+              )}
+              <div className="rail-hover-sub">
+                {cards[hovered].bullets && cards[hovered].bullets!.length > 0 && (
+                  <span>&bull; {cards[hovered].bullets![0]}</span>
+                )}
+              </div>
+            </motion.div>
+          )
+        })()}
+      </AnimatePresence>
     </div>
   )
 }

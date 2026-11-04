@@ -20,9 +20,23 @@ export function Drawer({ card, open, onClose }: { card: Card; open: boolean; onC
       transition={{ type: 'spring', stiffness: 260, damping: 30 }}
     >
       <div className="drawer-head">
-        <div className="kicker">DETAILS · {card.kicker}</div>
-        <button className="x-btn" onClick={onClose} aria-label="Close details">Close</button>
+        <div className="kicker">GUIDELINES &middot; {card.kicker}</div>
+        <button className="x-btn" onClick={onClose} aria-label="Close guidelines">Close</button>
       </div>
+
+      <section>
+        <h3>In plain English</h3>
+        <p>{d.happening}</p>
+      </section>
+
+      {!!d.talking?.length && (
+        <section>
+          <h3>Key Guidelines &amp; Insights</h3>
+          <ul className="talking">
+            {d.talking.map((t) => <li key={t}>{t}</li>)}
+          </ul>
+        </section>
+      )}
 
       {(d.install || d.commands?.length) && (
         <section>
@@ -48,7 +62,7 @@ export function Drawer({ card, open, onClose }: { card: Card; open: boolean; onC
 
       {!!d.commands?.length && (
         <section>
-          <h3>Copy-paste commands</h3>
+          <h3>Commands to try</h3>
           {d.commands.some((c) => missing(resolve(c), details)) && <p className="drawer-banner">Add your details once (press U) and every command fills in for you.</p>}
           {d.commands.map((c, i) => {
             const text = resolve(c)
@@ -77,19 +91,6 @@ export function Drawer({ card, open, onClose }: { card: Card; open: boolean; onC
             : <ul className="talking">{s.items.map((i) => <li key={i}>{i}</li>)}</ul>}
         </section>
       ))}
-
-      <section>
-        <h3>In plain English</h3>
-        <p>{d.happening}</p>
-      </section>
-
-      {!!d.talking?.length && (
-        <section>
-          <h3>Talking points</h3>
-          <ul className="talking">
-            {d.talking.map((t) => <li key={t}>{t}</li>)}
-          </ul>
-        </section>
-      )}    </motion.aside>
+    </motion.aside>
   )
 }

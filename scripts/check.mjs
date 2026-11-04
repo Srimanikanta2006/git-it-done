@@ -55,17 +55,18 @@ const CARDS = [
   ['branch-commit', 'Make a change. Check it. Save it as a commit.', 7],
   ['branch-merge', 'Feature complete? Bring it back into main.', 5],
   ['oss-intro', 'Great software is built by people working together.', 3],
-  ['oss-issues', 'Find something to fix', 0],
-  ['oss-pull-requests', 'You can\u2019t push directly. So you propose instead.', 2],
-  ['oss-first-contrib', 'Let\u2019s contribute to MUKTI!', 0],
-  ['oss-fork', 'Make your own copy', 0],
+  ['oss-issues', 'Pick an issue to contribute to.', 0],
+  ['oss-pull-requests', 'Your code is ready. But how does it reach the project?', 0],
+  ['oss-first-contrib', 'Let\u2019s make our first open-source contribution!', 0],
+  ['oss-fork', 'Start by forking the repository.', 0],
   ['oss-clone', 'Bring it onto your computer', 3],
   ['oss-commit-push', 'Make the change. Save it. Send it up.', 3],
   ['oss-create-pr', 'Propose your change to the original repository', 0],
   ['oss-workflow', 'The whole process, in eight steps', 0],
   ['oss-challenge', 'MUKTI Challenge: make it yours', 0],
+  ['git-resources', 'Keep going: games, cheatsheets & open source', 0],
 ]
-const LAST = 'oss-challenge'
+const LAST = 'git-resources'
 /* Terminal entries expected after each press on the branching terminal cards (press 3 on branch-create is a reset). */
 const TLINES = {
   'branch-create': [0, 1, 2, 3, 4, 5, 0, 1],
@@ -258,7 +259,7 @@ const MEASURE = (strict) => {
   for (let n; (n = walker.nextNode());) {
     if (!n.textContent.trim()) continue
     const el = n.parentElement
-    if (hidden(el) || el.closest('.drawer') || el.closest('[aria-hidden="true"]')) continue
+    if (hidden(el) || el.closest('.drawer') || el.closest('[aria-hidden="true"]') || el.closest('.space-guide')) continue
     const layer = el.closest('.slayer')
     if (layer && layer !== layer.parentElement.lastElementChild) continue // cards behind the front one in a stack
     const r = document.createRange(); r.selectNodeContents(n)
