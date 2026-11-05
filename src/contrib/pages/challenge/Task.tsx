@@ -1,39 +1,52 @@
-import { CONFIG, hasConfig } from '../../config'
-import { Callout, ChallengeSteps, Crumb, NextUp, PageHeader, Pending, Section } from '../../ui'
+import { Callout, ChallengeSteps, Crumb, NextUp, PageHeader, Section } from '../../ui'
 
 export function ChallengeTask() {
   return (
     <div className="doc-content">
       <Crumb />
-      <PageHeader eyebrow="MUKTI challenge" title="Find Your Assigned Task" lead="Work out exactly what you're being asked to change before you touch any code." />
+      <PageHeader
+        eyebrow="MUKTI challenge"
+        title="Find Your Assigned Task"
+        lead="Work out your assigned number and word before you touch any code."
+      />
       <ChallengeSteps current="challenge/task" />
 
       <Section title="How tasks are assigned">
-        {hasConfig(CONFIG.assignmentMechanism) ? (
-          <p>{CONFIG.assignmentMechanism}</p>
-        ) : (
-          <Callout tone="warn" title="Not finalised yet">
-            The exact way tasks are assigned across 150&ndash;200 participants hasn't been decided yet (a shared issue list, a
-            label per participant, a generated file per person, or something else). <Pending>Final assignment mechanism</Pending>{' '}
-            will be announced during the workshop and added here. The steps below apply regardless of the method chosen.
-          </Callout>
-        )}
+        <p>
+          Each participant is assigned a numbered <strong>GitHub Issue</strong> in the repository:
+        </p>
+        <p>
+          <code>MUKTI Contribution #&#123;PARTICIPANT_ID&#125; 🚀</code>
+        </p>
+        <Callout tone="tip" title="Check your assigned issue">
+          Open your assigned issue on GitHub to see your <strong>Participant ID</strong> (e.g. <code>#12</code>) and your{' '}
+          <strong>Assigned Word</strong> (e.g. <code>freedom</code>). You will contribute that single word to our collective community message.
+        </Callout>
       </Section>
 
-      <Section title="Understanding your task, once you have it">
+      <Section title="Your exact mission">
         <ol>
-          <li>Open the issue or instructions you've been pointed to.</li>
-          <li>Read the full description, not just the title.</li>
-          <li>Identify the exact file (or files) you need to change.</li>
-          <li>Identify what the result should look like once you're done.</li>
-          <li>If anything is unclear, ask a volunteer or comment on the issue &mdash; don't guess.</li>
+          <li>Open your assigned issue and note down your number and word.</li>
+          <li>The only file you will modify is <code>README.md</code>.</li>
+          <li>Find the line matching your number under the <strong>MUKTI Community Message</strong> section.</li>
+          <li>Replace <strong>only your number</strong> with your assigned word.</li>
+          <li>Do not touch any other lines, numbers, or files.</li>
         </ol>
+      </Section>
+
+      <Section title="Expected Result">
+        <p><strong>Before:</strong></p>
+        <pre><code>12. 12</code></pre>
+        <p><strong>After:</strong></p>
+        <pre><code>12. freedom</code></pre>
+        <p>
+          <em>Notice: Because every participant edits their own distinct line, you do not need to worry about complex merge conflicts or running <code>git pull</code>!</em>
+        </p>
       </Section>
 
       <Section title="Where to ask for help">
         <p>
-          Ask a volunteer in the room, or leave a comment on your assigned issue. Don't spend more than a couple of minutes
-          stuck before asking &mdash; the workshop moves fast.
+          If you are unsure of your number or word, ask a volunteer in the room or leave a comment on your assigned issue.
         </p>
       </Section>
 

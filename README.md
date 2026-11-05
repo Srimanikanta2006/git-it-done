@@ -55,6 +55,161 @@ Designed for **1920×1080 TV displays**. Fonts are bundled so it works **fully o
 
 ---
 
+## 🌟 MUKTI Community Message (Live Challenge)
+
+Welcome to the **MUKTI Open Source Challenge**! Your task is to contribute one word to our community message.
+
+### 🎯 Your Task
+
+Replace your assigned number (`{{PARTICIPANT_ID}}`) with your assigned word (`{{ASSIGNED_WORD}}`) from your assigned GitHub Issue.
+
+- **File to modify:** `README.md`
+- **Expected Result:**
+  - **Before:** `12. 12`
+  - **After:** `12. freedom`
+
+### 🛠️ How to Contribute (Zero-Conflict Flow)
+
+1. Click the **Fork** button on this repository.
+2. Clone your fork:
+   ```bash
+   git clone YOUR_FORK_URL
+   cd git-it-done
+   ```
+3. Open `README.md` in your text editor / VS Code.
+4. Find your assigned number line below (e.g. `12. 12`).
+5. Replace it with your assigned word (e.g. `12. freedom`).
+6. Save the file and commit your changes:
+   ```bash
+   git add README.md
+   git commit -m "Add MUKTI contribution #YOUR_ID"
+   ```
+7. Push directly to your fork:
+   ```bash
+   git push origin main
+   ```
+8. Go to your fork on GitHub and click **Contribute → Open pull request** (or **Compare & pull request**).
+9. Submit your Pull Request to the original repository.
+
+> ⚡ **Zero-Conflict Guarantee:**
+> Because each participant modifies their own isolated line in `README.md`, you do **NOT** need to run `git pull` or resolve complex merge conflicts! Your Pull Request will show a green checkmark (`Able to merge`) and can be merged automatically.
+
+### 📋 Contribution Guidelines
+
+- Replace only your assigned number.
+- Do not modify other participants' numbers or words.
+- Do not change anything outside the contribution section below.
+- Submit your Pull Request to the original repository.
+
+---
+
+### 💬 Community Message Slots
+
+<!-- MUKTI_COMMUNITY_MESSAGE_START -->
+1. 1
+2. 2
+3. 3
+4. 4
+5. 5
+6. 6
+7. 7
+8. 8
+9. 9
+10. 10
+11. 11
+12. 12
+13. 13
+14. 14
+15. 15
+16. 16
+17. 17
+18. 18
+19. 19
+20. 20
+21. 21
+22. 22
+23. 23
+24. 24
+25. 25
+26. 26
+27. 27
+28. 28
+29. 29
+30. 30
+31. 31
+32. 32
+33. 33
+34. 34
+35. 35
+36. 36
+37. 37
+38. 38
+39. 39
+40. 40
+41. 41
+42. 42
+43. 43
+44. 44
+45. 45
+46. 46
+47. 47
+48. 48
+49. 49
+50. 50
+51. 51
+52. 52
+53. 53
+54. 54
+55. 55
+56. 56
+57. 57
+58. 58
+59. 59
+60. 60
+61. 61
+62. 62
+63. 63
+64. 64
+65. 65
+66. 66
+67. 67
+68. 68
+69. 69
+70. 70
+71. 71
+72. 72
+73. 73
+74. 74
+75. 75
+76. 76
+77. 77
+78. 78
+79. 79
+80. 80
+81. 81
+82. 82
+83. 83
+84. 84
+85. 85
+86. 86
+87. 87
+88. 88
+89. 89
+90. 90
+91. 91
+92. 92
+93. 93
+94. 94
+95. 95
+96. 96
+97. 97
+98. 98
+99. 99
+100. 100
+<!-- MUKTI_COMMUNITY_MESSAGE_END -->
+
+---
+
 ## ✨ Features
 
 ### 🎴 Interactive Presentation Cards
@@ -533,3 +688,4 @@ npm run check        # Run E2E tests
 *Mohsin · Vijay*
 
 </div>
+
